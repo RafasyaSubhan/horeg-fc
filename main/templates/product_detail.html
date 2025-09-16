@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} | Horeg FC</title>
+    <style>
+        body {
+                background-color: #4f1a2f;
+            }
+        h1 {
+            text-align: center;
+            font-size: 90px;
+            color: #54092a; /* warna utama teks */
+            text-shadow: 
+            0 0 5px #9e2157,
+            0 0 10px #9e2157,
+            0 0 20px #9e2157,
+            0 0 40px #ff4da6; /* bisa tambahkan layer glow */
+            margin-top: 5;
+        }
+        p {
+            text-align: center;
+        }
+        img {
+            display: block;
+            margin: 0 auto;
+        }
+        button {
+            border-radius: 8px;
+            border: none;
+            background-color: #c2527f;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        button:hover {
+            cursor: pointer;
+            background-color: #8d3a5b;
+        }
+    </style>
+</head>
+<body>
+    <p>
+        <div style="text-align: left;">
+            <a href="{% url 'main:show_main' %}">
+                <button style="font-size: 15px;
+                padding: 10px 15px;">
+                    ← Back to Products List
+                </button>
+            </a>
+        </div>
+    </p>
+
+    <h1>{{ product.name }}</h1>
+
+    <p>
+        <b>{{ product.get_category_display }}</b> | Price: Rp{{ product.price }}
+        {% if product.is_featured %} | <b>Featured</b>{% endif %}
+        {% if product.is_viral %} | <b>Hot</b>{% endif %}
+        | <i>{{ product.date_time|date:"d M Y, H:i" }}</i>
+        | Views: {{ product.viewers }}
+    </p>
+
+    {% if product.thumbnail %}
+        <img src="{{ product.thumbnail }}" alt="Product Thumbnail" width="300">
+        <br /><br />
+    {% endif %}
+
+    <p>{{ product.description }}</p>
+</body>
+</html>

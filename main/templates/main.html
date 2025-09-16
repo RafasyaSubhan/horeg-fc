@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Horeg FC</title>
         <style>
             body {
@@ -17,14 +19,84 @@
                 0 0 40px #ff4da6; /* bisa tambahkan layer glow */
                 margin-top: 5;
             }
+            h2 {
+                text-align: center;
+            }
             p {
                 text-align: center;
+            }
+            .shop-desc {
+                font-size: 20px;
+            }
+            img {
+                display: block;
+                margin: auto;
+            }
+            button {
+                border-radius: 8px;
+                border: none;
+                background-color: #c2527f;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+                transition: box-shadow 0.2s, transform 0.2s;
+            }
+            button:hover {
+                cursor: pointer;
+                background-color: #8d3a5b;
             }
         </style>
     </head>
     <body>
         <h1>ℌ𝔬𝔯𝔢𝔤 𝔉ℭ'</h1>
         
-        <p>Hello! Welcome to Horeg FC. This store is managed by {{ name }} with npm {{ npm }}. He is one of {{ class }} student.</p>
+        <p class="shop-desc">Hello! Welcome to Horeg FC. This store is managed by {{ name }} with npm {{ npm }}. He is one of {{ class }} student.</p>
+        <div style="text-align: center;">
+            <a href="{% url 'main:add_product' %}">
+                <button style="font-size: 15px;
+                padding: 12px 20px;
+                font-weight: bold;">
+                    + Add Product
+                </button>
+            </a>
+        </div>
+
+        <br/>
+
+        {% if not products_list %}
+        <p>Belum ada product yang dijual.</p>
+        {% else %}
+
+        {% for product in products_list %}
+        <div>
+            <h2>
+                <a href="{% url 'main:show_product' product.id %}">{{ product.name }}</a>
+            </h2>
+
+            <p>
+                <b>
+                    {{ product.get_category_display }} | Price: Rp{{ product.price }}
+                </b> {% if product.is_featured %} |
+
+                <b>
+                    Featured
+                </b> {% endif %}{% if product.is_viral %} |
+                <b>
+                    Hot 🔥
+                </b> {% endif %} | <i>{{ product.date_time|date:"d M Y H:i" }}</i>
+                | Views: {{ product.viewers }}
+            </p>
+
+            {% if product.thumbnail %}
+            <img src="{{ product.thumbnail }}" alt="thumbnail" width="200" height="250">
+            <br/>
+            {% endif %}
+
+            <p>{{ product.description|truncatewords:25 }}...</p>
+
+            <p><a href="{% url 'main:show_product' product.id %}"><button>Read More</button></a></p>
+        </div>
+
+        {% endfor %}
+
+        {% endif %}
     </body>
 </html>

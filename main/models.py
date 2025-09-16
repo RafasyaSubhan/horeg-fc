@@ -1,6 +1,7 @@
+import uuid
 from django.db import models
 
-class News(models.Model):
+class Product(models.Model):
     CATEGORY_CHOICES = [
         ('jersey', 'Jersey'),
         ('shoes', 'Footbal Shoes'),
@@ -9,22 +10,23 @@ class News(models.Model):
         ('accessories', 'Accessories')
     ]
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     price = models.IntegerField()
     description = models.TextField()
     thumbnail = models.URLField(blank=True, null=True)
-    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='update')
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='jersey')
     is_featured = models.BooleanField(default=False)
-    rating = models.FloatField(default=0)
-    visitor = models.PositiveIntegerField(default=0)
+    date_time = models.DateTimeField(auto_now_add=True)
+    viewers = models.PositiveIntegerField(default=0)
     
     def __str__(self):
         return self.name
     
     @property
     def is_viral(self):
-        return self.rating > 3
+        return self.viewers > 10
         
-    def total_visitor(self):
-        self.visitor += 1
+    def add_visitor(self):
+        self.viewers += 1
         self.save()

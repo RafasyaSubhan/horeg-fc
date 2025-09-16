@@ -68,3 +68,70 @@ Django sudah menyediakan banyak fitur bawaan sehingga tidak perlu mengatur semua
 
 ## Feedback untuk Asdos Tutorial 1
 Tidak ada, kebetulan tutorial 1 tidak menemukan kesulitan
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+# Tugas 3
+1. Buat file `forms.py`
+    ```bash
+    from django.forms import ModelForm
+    from main.models import Product
+
+    class NewsForm(ModelForm):
+        class Meta:
+            model = Product
+            fields = ["name", "description", "category", "thumbnail", "is_viral"]
+2. Menambahkan beberapa import pada `views.py`
+3. Menambahkan variable `products_list` dan fungsi baru pada `views.py`
+4. Menambahkan import fungsi yang sudah dibuat tadi pada `urls.py` di direktori main
+5. Tambahkan path URL ke dalam `urlpatterns`
+6. Ubah `main.html` agar bisa menampilkan data dan add new product yang akan muncul di halaman form
+7. Buat file baru bernama `add_product.html`, yang berisikan token security dan template tag
+8. Buat file baru bernama `product_detail.html`
+9. Tambahkan `CSRF_TRUSTED_ORIGINS` di dalam `settings.py`
+
+
+1. Import `HttpResponse` dan `Serializer` di views.py
+2. Tambahkan fungsi `show_xml` dan `show_json` di `views.py`
+3. Tambahkan import `show_xml` dan `show_json` di `urls.py`
+4. Tambahkan path `path('xml/', show_xml, name='show_xml')` dan `path('json/', show_json, name='show_json')` di `urlpatterns`
+5. Tambahkan fungsi `show_xml_by_id` dan `show_json_by_id` di views.py
+6. Untuk by id, gunakan blok try and catch agar diteruskan ke error code 404 jika terjadi error
+7. Tambahkan importnya di `urls.py`
+8. Tambahkan pathnya di `urlspatterns`
+
+## Mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+Data delivery berguna untuk menyalurkan data dari sumber, seperti database, server, dan lainnya ke pengguna yang membutuhkan.
+Data delivery memastikan data bergerak dari sumber ke pengguna dengan cepat, aman, dan konsisten.
+Tanpa data delivery, platform mungkin akan mengalami masalah kinerja, keamanan, dan lainnya yang mengakibatkan turunnya kualitas layanan bagi pengguna
+
+## Lebih baik XML atau JSON? Mengapa JSON lebih populer?
+Menurut saya lebih baik JSON, karena tata bahasa yang digunakan mirip Java Script dan dia menggunakan seperti dictionary. Perbedaannya dengan dictionary adalah key di JSON harus string.
+Selain itu, JSON juga lebih mudah dibaca dibandingkan dengan XML
+
+## Fungsi dari method is_valid()
+Method `is_valid()` berguna untuk memvalidasi data yang dikirim oleh form, misalnya seperti mengecek field yang seharusnya menerima sebuah integer, form ternyata menerima string alphabet. Jika string angka, method `is_valid` akan mengubahnya menjadi integer
+Contoh untuk price sebuah IntegerField, jika user memasukkan sebuah integer maka `is_valid()` akan mengembalikan `True`
+    
+## Mengapa butuh csrf_token pada form Django? Apa yang terjadi jika tidak menambahkan csrf_token? Bagaimana hal tersebut bisa dimanfaatkan penyerang?
+CSRF adalah token unique yang dibuat oleh Django untuk melindungi form dari serangan CSRF (Cross-Site Request Forgery)
+Jika tidak menambahkan token, penyerang bisa menjalankan aksi seperti mengubah password atau menghapus data
+Penyerang membuat halaman berbahaya yang mengirim request POST ke target, browser korban mengikutsertakan cookie login tanpa disadari
+
+## Step by step
+Saya mengikuti sedikit dari tutorial (karena beberapa data tidak terlalu perlu diubah/berbeda) dan mencoba-coba untuk htmlnya. Menghadapi trials dan errors karena models kekurangan attributes yang cukup diperlukan
+
+## Pesan untuk asdos
+tidak ada
+
+## Postman Screenshot
+1. XML
+![Postman XML](xml_postman.png)
+
+2. JSON
+![Postman JSON](json_postman.png)
+
+3. XML with ID
+![Postman XML with ID](xml_id_postman.png)
+
+4. JSON with ID
+![Postman JSON with ID](json_id_postman.png)

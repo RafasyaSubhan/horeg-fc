@@ -35,6 +35,14 @@ def show_product(request,id):
     }
     return render(request, "product_detail.html", context)
 
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+
+    if request.method == "POST":
+        product.delete()
+        return redirect("main:show_main")
+    return render(request, "delete_product.html", {"product": product})
+
 def show_xml(request):
     products_list = Product.objects.all()
     xml_data = serializers.serialize("xml", products_list)

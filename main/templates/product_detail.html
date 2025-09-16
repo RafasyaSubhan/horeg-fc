@@ -68,5 +68,21 @@
     {% endif %}
 
     <p>{{ product.description }}</p>
+
+    <div style="position: fixed; bottom: 20px; right: 20px;">
+        <form method="post" action="{% url 'main:delete_product' product.id %}">
+            {% csrf_token %}
+            <button type="submit" style="
+                background-color: red;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 8px;
+                cursor: pointer;
+            ">
+                Delete
+            </button>
+        </form>
+    </div>
 </body>
 </html>

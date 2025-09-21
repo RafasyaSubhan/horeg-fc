@@ -47,6 +47,16 @@
         </style>
     </head>
     <body>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <a href="{% url 'main:logout' %}">
+                <button>Logout</button>
+            </a>
+
+            <span style="opacity: 30%; margin-right: 10px; color: beige;">
+                User: {{ request.user }}
+            </span>
+        </div>
+
         <h1>ℌ𝔬𝔯𝔢𝔤 𝔉ℭ'</h1>
         
         <p class="shop-desc">Hello! Welcome to Horeg FC. This store is managed by {{ name }} with npm {{ npm }}. He is one of {{ class }} student.</p>
@@ -61,7 +71,12 @@
         </div>
 
         <br/>
-
+        <a href="?filter=all">
+            <button type="button">All Articles</button>
+        </a>
+        <a href="?filter=my">
+            <button type="button">My Articles</button>
+        </a> 
         {% if not products_list %}
         <p>Belum ada product yang dijual.</p>
         {% else %}
@@ -99,5 +114,10 @@
         {% endfor %}
 
         {% endif %}
+        <h5 style="color: beige;
+                opacity: 30%;
+                padding-bottom: 0;">
+                Sesi terakhir login: {{ last_login }}
+        </h5>
     </body>
 </html>

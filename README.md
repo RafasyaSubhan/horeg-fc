@@ -228,6 +228,18 @@ Kelebihan session terdapat pada keamanannya karena data asli terdapat di server 
 3. Import `edit_product` di `urls.py` serta tambahkan `path('news/<uuid:id>/edit', edit_product, name='edit_product')` di urlpatterns
 4. Buat file `edit_product.html` dengan isi kurang lebih sama seperti `add_product`
 5. Buat folder `templates` di direktori utama lalu buat file `navbar.html`
-6. Masukkan `{% include 'navbar.html' %}` di semua file html yang menggunakan navbar
-7. Ubah styling pada semua html jika diperlukan
+6. Masukkan `{% include 'navbar.html' %}` di semua file html
+7. Pada `settings.py`, tambahkan middleware WhiteNoise `'whitenoise.middleware.WhiteNoiseMiddleware'` tepat di bawah security
+8. Pastikan statics variable di `settings.py` dikonfigurasi
+    ```python
+    STATIC_URL = '/static/'
+    if DEBUG:
+        STATICFILES_DIRS = [
+            BASE_DIR / 'static' 
+        ]
+    else:
+    STATIC_ROOT = BASE_DIR / 'static' 
+9. Buat folder `static` di direktori utama, lalu tambahkan folder `image` dan tambahkan images yang diperlukan
+10. Tambahkan `{% load static %}` di semua html
+11. Ubah styling di semua html jika diperlukan
 </details>

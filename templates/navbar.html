@@ -1,0 +1,158 @@
+<style>
+    /* CSS Khusus untuk Navbar */
+    :root { /* Pastikan variabel warna ini tersedia atau definisikan di sini */
+        --carmine: #931F1D;
+        --chamoisee: #937B63;
+        --moss-green: #8A9B68;
+        --sage: #B6C197;
+        --beige: #D5DDBC;
+        --white: #FFFFFF;
+    }
+
+    .header {
+        background-color: var(--white);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--moss-green);
+        text-decoration: none;
+        flex-shrink: 0; /* Mencegah logo menyusut */
+    }
+    
+    /* Wrapper untuk menu desktop agar bisa disembunyikan bersamaan */
+    .desktop-menu {
+        display: none; /* Sembunyikan di mobile secara default */
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 2rem;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: var(--chamoisee);
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+        color: var(--carmine);
+    }
+    
+    /* Tombol Hamburger */
+    .mobile-menu-button {
+        display: block; /* Tampilkan di mobile */
+        background: none;
+        border: none;
+        padding: 0.5rem;
+        cursor: pointer;
+    }
+    .hamburger-line {
+        display: block;
+        width: 24px;
+        height: 3px;
+        background-color: var(--moss-green);
+        margin: 5px 0;
+    }
+
+    /* Menu Dropdown Mobile */
+    .mobile-menu {
+        background-color: white;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        padding: 1rem 2rem;
+    }
+    .mobile-menu a {
+        display: block;
+        padding: 0.75rem 0;
+        color: var(--chamoisee);
+        font-weight: 600;
+        text-decoration: none;
+    }
+    
+    .hidden {
+        display: none;
+    }
+
+    /* Tampilkan menu desktop dan sembunyikan tombol hamburger di layar besar */
+    @media (min-width: 768px) {
+        .desktop-menu {
+            display: flex;
+        }
+        .mobile-menu-button {
+            display: none;
+        }
+    }
+</style>
+
+<header class="header">
+    <nav class="navbar">
+        <a href="{% url 'main:show_main' %}" class="logo">ℌ𝔬𝔯𝔢𝔤 𝔉ℭ'</a>
+        
+        <div class="desktop-menu">
+            <ul class="nav-links">
+                <li><a href="{% url 'main:show_main' %}?filter=all">All Products</a></li>
+                <li><a href="{% url 'main:show_main' %}?filter=my">My Products</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'main:logout' %}">Logout</a></li>
+                {% else %}
+                <li><a href="{% url 'main:login' %}">Login</a></li>
+                <li><a href="{% url 'main:register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        
+        <button class="mobile-menu-button">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+    </nav>
+    
+    <div class="mobile-menu hidden">
+        <a href="{% url 'main:show_main' %}?filter=all">All Products</a>
+        <a href="{% url 'main:show_main' %}?filter=my">My Products</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'main:logout' %}">Logout</a>
+        {% else %}
+        <a href="{% url 'main:login' %}">Login</a>
+        <a href="{% url 'main:register' %}">Register</a>
+        {% endif %}
+    </div>
+</header>
+
+<script>
+    const btn = document.querySelector("button.mobile-menu-button");
+    const menu = document.querySelector(".mobile-menu");
+
+    if (btn && menu) {
+        btn.addEventListener("click", () => {
+            menu.classList.toggle("hidden");
+        });
+    }
+</script>

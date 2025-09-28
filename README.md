@@ -207,3 +207,27 @@ Kelebihan session terdapat pada keamanannya karena data asli terdapat di server 
     Secara default, penggunaan cookies dalam pengembangan web tidak sepenuhnya aman. Risiko potensial yang umumnya diwaspadai pada cookies adalah XSS, di mana penyerang dapat mengambil cookie dari browser korban. Django sudah menangani keamanan cookies, salah satunya seperti menerapkan token CSRF. Token ini disimpan ke dalam cookies serta di dalam halaman web.
 
 </details>
+<details>
+<Summary><b>Tugas 5</b></Summary>
+
+1. Karena sudah ada tombol Delete, tujuan selanjutnya buat tombol Edit
+2. Tambahkan fungsi `edit_product` di dalam `views.py`
+    ```python
+    def edit_product(request, id):
+        product = get_object_or_404(Product, pk=id)
+        form = ProductForm(request.POST or None, instance=product)
+        if form.is_valid() and request.method == "POST":
+            form.save()
+            return redirect('main:show_main')
+        
+        context = {
+            'form' : form
+        }
+
+        return render(request, "edit_product.html", context)
+3. Import `edit_product` di `urls.py` serta tambahkan `path('news/<uuid:id>/edit', edit_product, name='edit_product')` di urlpatterns
+4. Buat file `edit_product.html` dengan isi kurang lebih sama seperti `add_product`
+5. Buat folder `templates` di direktori utama lalu buat file `navbar.html`
+6. Masukkan `{% include 'navbar.html' %}` di semua file html yang menggunakan navbar
+7. Ubah styling pada semua html jika diperlukan
+</details>

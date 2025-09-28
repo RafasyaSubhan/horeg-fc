@@ -1,97 +1,147 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ product.name }} | Horeg FC</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body {
-                background-color: #4f1a2f;
-            }
-        h1 {
-            text-align: center;
-            font-size: 90px;
-            color: #54092a; /* warna utama teks */
-            text-shadow: 
-            0 0 5px #9e2157,
-            0 0 10px #9e2157,
-            0 0 20px #9e2157,
-            0 0 40px #ff4da6; /* bisa tambahkan layer glow */
-            margin-top: 5;
-        }
-        p {
-            text-align: center;
-            color: beige;
-        }
-        img {
-            display: block;
-            margin: 0 auto;
-        }
-        button {
-            border-radius: 8px;
-            border: none;
-            background-color: #c2527f;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: box-shadow 0.2s, transform 0.2s;
+        :root {
+            --carmine: #931F1D;
+            --chamoisee: #937B63;
+            --moss-green: #8A9B68;
+            --sage: #B6C197;
+            --beige: #D5DDBC;
+            --white: #FFFFFF;
         }
 
-        button:hover {
-            cursor: pointer;
-            background-color: #8d3a5b;
+        body {
+            background-color: var(--sage);
+            font-family: 'Poppins', sans-serif;
+            color: var(--chamoisee);
+            margin: 0;
         }
+        
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* Gambar dengan ratio 16:9 */
+        .product-image-container {
+            width: 70%;
+            margin: auto;
+            aspect-ratio: 16 / 9; /* Menjaga rasio 16:9 */
+            background-color: #e0e0e0; /* Warna fallback jika gambar tidak ada */
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .product-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        /* Deskripsi */
+        .product-content-box {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            margin-top: 1rem;
+        }
+        
+        .product-content-box h1 {
+            color: var(--moss-green);
+            font-size: 2.5rem;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.2;
+        }
+
+        .product-meta {
+            font-size: 1rem;
+            color: var(--chamoisee);
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1.5rem;
+        }
+
+        .product-description {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .button:hover { transform: translateY(-2px); }
+        .button-primary { background-color: var(--carmine); color: var(--white); }
+        .button-secondary { background-color: var(--chamoisee); color: var(--white); }
     </style>
 </head>
 <body>
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <a href="{% url 'main:show_main' %}">
-            <button style="font-size: 15px; padding: 10px 15px;">
-                ← Back to Products List
-            </button>
-        </a>
-        <span style="opacity: 30%; margin-right: 10px; color: beige;">
-            User: {{ request.user }}
-        </span>
+    
+    {% include 'navbar.html' %}
+
+    <div class="container">
+        
+        <div class="product-image-container">
+            {% if product.thumbnail %}
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }} thumbnail">
+            {% else %}
+                <img src="{% static 'image/no-thumbnail.jpg' %}" alt="No Thumbnail">
+            {% endif %}
+        </div>
+        
+        <div class="product-content-box">
+            <h1>{{ product.name }}</h1>
+            
+            <p class="product-meta">
+                <b>{{ product.get_category_display }} | Price: Rp{{ product.price }}</b>
+                <br>
+                <i>{{ product.date_time|date:"d M Y, H:i" }}</i> | Views: {{ product.viewers }}
+            </p>
+
+            <p class="product-description">{{ product.description }}</p>
+
+            <div class="action-buttons">
+                <a href="{% url 'main:show_main' %}" class="button button-secondary">← Back to List</a>
+                
+                {% if request.user == product.user %}
+                    <a href="{% url 'main:edit_product' product.pk %}" class="button button-secondary">Edit</a>
+                    <form method="post" action="{% url 'main:delete_product' product.id %}" onsubmit="return confirm('Are you sure?');">
+                        {% csrf_token %}
+                        <button type="submit" class="button button-primary">Delete</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
     </div>
 
-    <h1>{{ product.name }}</h1>
-
-    <p>
-        <b>{{ product.get_category_display }}</b> | Price: Rp{{ product.price }}
-        {% if product.is_featured %} | <b>Featured</b>{% endif %}
-        {% if product.is_viral %} | <b>Hot 🔥</b>{% endif %}
-        | <i>{{ product.date_time|date:"d M Y, H:i" }}</i>
-        | Views: {{ product.viewers }}
-    </p>
-
-    {% if product.thumbnail %}
-        <img src="{{ product.thumbnail }}" alt="Product Thumbnail" width="300">
-        <br /><br />
-    {% endif %}
-
-    <p>{{ product.description }}</p>
-
-    {% if product.user %}
-        <p>Author: {{ product.user.username }}</p>
-    {% else %}
-        <p>Author: Anonymous</p>
-    {% endif %}
-
-    {% if request.user == product.user %}
-        <div style="position: fixed; bottom: 20px; right: 20px;">
-            <form method="post" action="{% url 'main:delete_product' product.id %}">
-                {% csrf_token %}
-                <button type="submit" style="
-                    background-color: red;
-                    color: white;
-                    border: none;
-                    padding: 10px 15px;
-                    border-radius: 7px;
-                    cursor: pointer;
-                ">
-                    Delete
-                </button>
-            </form>
-        </div>
-    {% endif %}
 </body>
 </html>

@@ -1,38 +1,194 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Register - Horeg FC</title>
     <style>
-        body {
-            background-color: #4f1a2f;
-            color: beige;
+        :root {
+            --carmine: #931F1D;
+            --chamoisee: #937B63;
+            --moss-green: #8A9B68;
+            --sage: #B6C197;
+            --beige: #D5DDBC;
+            --white: #FFFFFF;
         }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+        
+        /* Kontainer utama untuk menengahkan form */
+        .register-container {
+            background-color: var(--sage);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        /* Kotak form register */
+        .register-box {
+            background-color: var(--white);
+            max-width: 450px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .register-header h1 {
+            font-size: 2rem;
+            color: var(--moss-green);
+            margin: 0 0 0.5rem 0;
+        }
+
+        .register-header p {
+            color: var(--chamoisee);
+        }
+        
+        /* Styling untuk form */
+        .register-form .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .register-form label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--chamoisee);
+            margin-bottom: 0.5rem;
+        }
+
+        .register-form input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .register-form input:focus {
+            outline: none;
+            border-color: var(--moss-green);
+            box-shadow: 0 0 0 3px rgba(138, 155, 104, 0.2);
+        }
+
+        .register-form .button {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--carmine);
+            color: var(--white);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .register-form .button:hover {
+            background-color: #7a1a18;
+        }
+        
+        .login-link {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            text-align: center;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+            color: var(--chamoisee);
+        }
+
+        .login-link a {
+            color: var(--moss-green);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        /* Styling untuk pesan error/sukses */
+        .form-errors, .messages {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        .error-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .error-list li {
+            background-color: #fff1f2;
+            border: 1px solid #ffb7b7;
+            color: #c42727;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+        }
+
     </style>
 </head>
 <body>
-    <div>
-        <h1>Register</h1>
+    <div class="register-container">
+        <div class="register-box">
+            
+            <div class="register-header">
+                <h1>Create Account</h1>
+                <p>Join Horeg FC today!</p>
+            </div>
 
-        <form method="POST">
-            {% csrf_token %}
-            <table>
-                {{ form.as_table }}
-                <tr>
-                    <td></td>
-                    <td><input type="submit" name="submit" value="Daftar" /></td>
-                </tr>
-            </table>
-        </form>
+            {% if form.errors %}
+            <div class="form-errors">
+                <ul class="error-list">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
 
-        {% if messages %}
-        <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-        {% endif %}
+            <form method="POST" action="" class="register-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">Username</label>
+                    {{ form.username }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}">Password</label>
+                    {{ form.password1 }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                    {{ form.password2 }}
+                </div>
+
+                <button type="submit" class="button">Register</button>
+            </form>
+
+            <div class="login-link">
+                <p>Already have an account? <a href="{% url 'main:login' %}">Sign In</a></p>
+            </div>
+        </div>
     </div>
 </body>
 </html>

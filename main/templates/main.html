@@ -1,123 +1,208 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Horeg FC</title>
-        <style>
-            body {
-                background-color: #4f1a2f;
-            }
-            h1 {
-                text-align: center;
-                font-size: 90px;
-                color: #54092a; /* warna utama teks */
-                text-shadow: 
-                0 0 5px #9e2157,
-                0 0 10px #9e2157,
-                0 0 20px #9e2157,
-                0 0 40px #ff4da6; /* bisa tambahkan layer glow */
-                margin-top: 5;
-            }
-            h2 {
-                text-align: center;
-            }
-            p {
-                text-align: center;
-                color: beige;
-            }
-            .shop-desc {
-                font-size: 20px;
-            }
-            img {
-                display: block;
-                margin: auto;
-            }
-            button {
-                border-radius: 8px;
-                border: none;
-                background-color: #c2527f;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-                transition: box-shadow 0.2s, transform 0.2s;
-            }
-            button:hover {
-                cursor: pointer;
-                background-color: #8d3a5b;
-            }
-        </style>
-    </head>
-    <body>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <a href="{% url 'main:logout' %}">
-                <button>Logout</button>
-            </a>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Horeg FC | Products</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --carmine: #931F1D;
+            --chamoisee: #937B63;
+            --moss-green: #8A9B68;
+            --sage: #B6C197;
+            --beige: #D5DDBC;
+            --white: #FFFFFF;
+        }
 
-            <span style="opacity: 30%; margin-right: 10px; color: beige;">
-                User: {{ request.user }}
-            </span>
-        </div>
-
-        <h1>ℌ𝔬𝔯𝔢𝔤 𝔉ℭ'</h1>
+        body {
+            background-color: var(--sage);
+            font-family: 'Poppins', sans-serif;
+            color: var(--chamoisee);
+            margin: 0;
+        }
         
-        <p class="shop-desc">Hello! Welcome to Horeg FC. This store is managed by {{ name }} with npm {{ npm }}. He is one of {{ class }} student.</p>
-        <div style="text-align: center;">
-            <a href="{% url 'main:add_product' %}">
-                <button style="font-size: 15px;
-                padding: 12px 20px;
-                font-weight: bold;">
-                    + Add Product
-                </button>
-            </a>
-        </div>
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .page-header h1 {
+            color: var(--moss-green);
+            font-size: 2.5rem;
+            margin: 0 0 0.5rem 0;
+        }
 
-        <br/>
-        <a href="?filter=all">
-            <button type="button">All Articles</button>
-        </a>
-        <a href="?filter=my">
-            <button type="button">My Articles</button>
-        </a> 
-        {% if not products_list %}
-        <p>Belum ada product yang dijual.</p>
-        {% else %}
+        .shop-desc {
+            font-size: 1.1rem;
+            color: var(--chamoisee);
+            max-width: 600px;
+            margin: 0 auto 1.5rem auto;
+        }
 
-        {% for product in products_list %}
-        <div>
-            <h2>
-                <a href="{% url 'main:show_product' product.id %}">{{ product.name }}</a>
-            </h2>
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        /* Buttons */
+        .button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--chamoisee);
+            color: var(--white);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
 
-            <p>
-                <b>
-                    {{ product.get_category_display }} | Price: Rp{{ product.price }}
-                </b> {% if product.is_featured %} |
+        .button:hover {
+            transform: translateY(-2px);
+            background-color: #7d6851;
+        }
+        
+        .button-primary {
+            background-color: var(--carmine);
+        }
 
-                <b>
-                    Featured
-                </b> {% endif %}{% if product.is_viral %} |
-                <b>
-                    Hot 🔥
-                </b> {% endif %} | <i>{{ product.date_time|date:"d M Y H:i" }}</i>
-                | Views: {{ product.viewers }}
+        .button-primary:hover {
+            background-color: #7a1a18;
+        }
+
+        
+        /* Products */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover; 
+        }
+
+        .product-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-content h2 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.5rem;
+        }
+
+        .product-content h2 a {
+            text-decoration: none;
+            color: var(--moss-green);
+        }
+
+        .product-meta {
+            font-size: 0.9rem;
+            color: var(--chamoisee);
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            color: #5c4d3e;
+            flex-grow: 1; 
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-note {
+            text-align: center;
+            margin-top: 3rem;
+            color: var(--chamoisee);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    
+    {% include 'navbar.html' %}
+
+    <div class="container">
+        
+        <header class="page-header">
+            <h1>Our Collection</h1>
+            <p class="shop-desc">
+                Discover the official products of Horeg FC, managed by {{ name }} ({{ npm }}), a proud student of {{ class }}.
             </p>
+            <a href="{% url 'main:add_product' %}" class="button button-primary">+ Add New Product</a>
+        </header>
 
-            {% if product.thumbnail %}
-            <img src="{{ product.thumbnail }}" alt="thumbnail" width="200" height="250">
-            <br/>
-            {% endif %}
+        {% if not products_list %}
+            <img src="{% static 'image/no-product.png' %}" alt="No Product to display" style="display: block; margin: auto;">
+            <p style="text-align: center; font-size: 1.2rem; padding: 2rem;">No products to display yet.</p>
+        {% else %}
+            <div class="product-grid">
+                {% for product in products_list %}
+                <div class="product-card">
+                    {% if product.thumbnail %}
+                        <img src="{{ product.thumbnail }}" alt="{{ product.name }} thumbnail">
+                    {% else %}
+                        <img src="{% static 'image/no-thumbnail.jpg' %}" alt="No Thumbnail">
+                    {% endif %}
+                    
+                    <div class="product-content">
+                        <h2><a href="{% url 'main:show_product' product.id %}">{{ product.name }}</a></h2>
+                        
+                        <p class="product-meta">
+                            <b>{{ product.get_category_display }} | Price: Rp{{ product.price }}</b>
+                            {% if product.is_featured %} | <b>Featured</b>{% endif %}
+                            {% if product.is_viral %} | <b>Hot 🔥</b>{% endif %}
+                            <br>
+                            <i>{{ product.date_time|date:"d M Y H:i" }}</i> | Views: {{ product.viewers }}
+                        </p>
 
-            <p>{{ product.description|truncatewords:25 }}...</p>
-
-            <p><a href="{% url 'main:show_product' product.id %}"><button>Read More</button></a></p>
-        </div>
-
-        {% endfor %}
-
+                        <p class="product-description">{{ product.description|truncatewords:10 }}</p>
+                        
+                        <a href="{% url 'main:show_product' product.id %}" class="button">Read More</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         {% endif %}
-        <h5 style="color: beige;
-                opacity: 30%;
-                padding-bottom: 0;">
-                Sesi terakhir login: {{ last_login }}
-        </h5>
-    </body>
+        
+        <p class="footer-note">Last login session: {{ last_login }}</p>
+    </div>
+</body>
 </html>

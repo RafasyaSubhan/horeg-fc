@@ -1,58 +1,194 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Login - Horeg FC</title>
     <style>
+        :root {
+            --carmine: #931F1D;
+            --chamoisee: #937B63;
+            --moss-green: #8A9B68;
+            --sage: #B6C197;
+            --beige: #D5DDBC;
+            --white: #FFFFFF;
+        }
+
         body {
-            background-color: #4f1a2f;
-            color: beige;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            overflow: hidden;
         }
-        h1 {
+        
+        .login-container {
+            background-color: var(--sage);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        /* Kotak form login */
+        .login-box {
+            background-color: var(--white);
+            max-width: 450px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+
+        .login-header {
             text-align: center;
-            font-size: 90px;
-            color: #54092a; /* warna utama teks */
-            text-shadow: 
-            0 0 5px #9e2157,
-            0 0 10px #9e2157,
-            0 0 20px #9e2157,
-            0 0 40px #ff4da6; /* bisa tambahkan layer glow */
-            margin-top: 5;
+            margin-bottom: 2rem;
         }
+
+        .login-header h1 {
+            font-size: 2rem;
+            color: var(--moss-green);
+            margin: 0 0 0.5rem 0;
+        }
+
+        .login-header p {
+            color: var(--chamoisee);
+        }
+        
+        /* Form */
+        .login-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .login-form label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--chamoisee);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box; /* Penting agar padding tidak menambah lebar */
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--moss-green);
+            box-shadow: 0 0 0 3px rgba(138, 155, 104, 0.2);
+        }
+
+        .login-form .button {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--carmine);
+            color: var(--white);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .login-form .button:hover {
+            background-color: #7a1a18;
+        }
+        
+        /* Tombol register */
+        .register-link {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            text-align: center;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+            color: var(--chamoisee);
+        }
+
+        .register-link a {
+            color: var(--moss-green);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        /* Messages */
+        .messages {
+            margin-top: 1rem;
+        }
+        .message {
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border: 1px solid;
+        }
+        .message.success {
+            background-color: #f0fdf4;
+            border-color: #bbf7d0;
+            color: #166534;
+        }
+        .message.error {
+            background-color: #fff1f2;
+            border-color: #ffb7b7;
+            color: #c42727;
+        }
+
     </style>
 </head>
 <body>
-    <div class="login">
-        <h1>Login</h1>
-
-        <form method="POST" action="">
-            <div style="display: flex; justify-content: center; text-align: center;">
-                {% csrf_token %}
-                <table>
-                {{ form.as_table }}
-                <tr>
-                    <td></td>
-                    <td><input class="btn login_btn" type="submit" value="Login" /></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        Don't have an account yet?
-                        <a href="{% url 'main:register' %}">Register Now</a>    
-                    </td>
-                </tr>
-                </table>
+    <div class="login-container">
+        <div class="login-box">
+            
+            <div class="login-header">
+                <h1>Welcome Back!</h1>
+                <p>Sign in to continue to Horeg FC</p>
             </div>
-        </form>
 
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+            {% if form.non_field_errors %}
+                <div class="messages">
+                {% for error in form.non_field_errors %}
+                    <div class="message error">{{ error }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="POST" action="" class="login-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input id="username" name="username" type="text" required placeholder="Enter your username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" required placeholder="Enter your password">
+                </div>
+
+                <button type="submit" class="button">Sign In</button>
+            </form>
+
+            {% if messages %}
+                <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="register-link">
+                <p>Don't have an account? <a href="{% url 'main:register' %}">Register Now</a></p>
+            </div>
+        </div>
     </div>
 </body>
 </html>

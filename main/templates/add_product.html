@@ -9,114 +9,135 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <title>Add Product - Horeg FC</title>
     <style>
-        :root {
-            --carmine: #931F1D;
-            --chamoisee: #937B63;
-            --moss-green: #8A9B68;
-            --sage: #B6C197;
-            --beige: #D5DDBC;
-            --white: #FFFFFF;
-        }
+    :root {
+        --carmine: #931F1D;
+        --chamoisee: #937B63;
+        --moss-green: #8A9B68;
+        --sage: #B6C197;
+        --beige: #D5DDBC;
+        --white: #FFFFFF;
+    }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--sage);
-            margin: 0;
-        }
-        
-        /* Kontainer utama untuk menengahkan form */
-        .form-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-        }
-        
-        /* Kotak form */
-        .form-box {
-            background-color: var(--white);
-            width: 100%;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
-            box-sizing: border-box;
-        }
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--sage);
+        margin: 0;
+    }
+    
+    /* Kontainer utama untuk menengahkan form */
+    .form-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+    }
+    
+    /* Kotak form */
+    .form-box {
+        background-color: var(--white);
+        width: 100%;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        box-sizing: border-box;
+    }
 
-        .form-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+    .form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
 
-        .form-header h1 {
-            font-size: 2rem;
-            color: var(--moss-green);
-            margin: 0 0 0.5rem 0;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+    .form-header h1 {
+        font-size: 2rem;
+        color: var(--moss-green);
+        margin: 0 0 0.5rem 0;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
 
-        label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--chamoisee);
-            margin-bottom: 0.5rem;
-        }
+    label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--chamoisee);
+        margin-bottom: 0.5rem;
+    }
 
-        input[type="text"],
-        input[type="number"],
-        input[type="url"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: 'Poppins', sans-serif;
-            box-sizing: border-box;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--moss-green);
-            box-shadow: 0 0 0 3px rgba(138, 155, 104, 0.2);
-        }
+    input[type="text"],
+    input[type="number"],
+    input[type="url"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        border-color: var(--moss-green);
+        box-shadow: 0 0 0 3px rgba(138, 155, 104, 0.2);
+    }
 
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .checkbox-group input {
-            width: auto;
-        }
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .checkbox-group input {
+        width: auto;
+    }
 
-        .button {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-            border: none;
-            background-color: var(--carmine);
-            color: var(--white);
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 1rem;
-        }
-        
-        .button:hover {
-            background-color: #7a1a18;
-        }
+    .button {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        border: none;
+        background-color: var(--carmine);
+        color: var(--white);
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 1rem;
+    }
+    
+    .button:hover {
+        background-color: #7a1a18;
+    }
+
+    /* Error */
+    .form-errors {
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+    .error-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem; /* Memberi jarak antar pesan error */
+    }
+    .error-list li {
+        background-color: #fff1f2;
+        border: 1px solid #ffb7b7;
+        color: #c42727;
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+    }
 
     </style>
 </head>
@@ -129,6 +150,21 @@
             <div class="form-header">
                 <h1>Add New Product</h1>
             </div>
+
+            {% if form.errors %}
+            <div class="form-errors">
+                <ul class="error-list">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
 
             <form method="POST">
                 {% csrf_token %}

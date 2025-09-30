@@ -242,4 +242,41 @@ Kelebihan session terdapat pada keamanannya karena data asli terdapat di server 
 9. Buat folder `static` di direktori utama, lalu tambahkan folder `image` dan tambahkan images yang diperlukan
 10. Tambahkan `{% load static %}` di semua html
 11. Ubah styling di semua html jika diperlukan
+
+## Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+Urutan prioritas diurutkan dari yang lebih diutamakan dari sebuah selector adalah sebagai berikut
+1. Inline style, 
+2. ID selector, 
+3. Class, attribute, pseudo-class
+4. Elemen atau tag selector
+
+## Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+Responsive design menjadi penting agar UX lebih baik, sehingga website tetap nyaman digunakan di semua perangkat, mudah untuk melakukan interaksi pada website, mudah terbaca.
+Contoh website yang sudah responsive, youtube, x, pinterest, dan masih banyak lagi.
+Contoh website yang tidak responsive, bukalapak, dan website-website jadul yang tidak mendapatkan update
+
+## Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+Margin berfungsi untuk memberikan jarak di luar elemen dengan elemen lainnya
+Border memberikan garis tepi di sekitar elemen, memisahkan elemen yang diberikan border dengan elemen lainnya
+Padding memberikan jarak di dalam elemen antara konten dan border. Posisinya ada di dalam border
+
+Misalnya berada pada section <style>,
+margin: 10px; Berarti memberikan jarak elemen A ke seluruh arah sejauh 10px
+margin-top 10px; Berarti memberikan jarak elemen A ke atas sejauh 10px
+margin-bottom: 10px;
+margin-right: 10px;
+margin-left: 10px;
+
+border: 2px; Berarti membuat border dengan ketebalan 2 px
+border-radius: 5px; Berarti membuat sudut atau corner dari border lebih bulat
+
+padding: 10px; Berarti memberikan jarak elemen A dengan border di seluruh arah
+padding-top: 10px; Berarti memberikan jarak elemen A dengan border di atas
+padding-bottom: 10px;
+padding-right: 10px;
+padding-left: 10px;
+
+## Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+Flexbox adalah layout satu dimensi yang dapat membuat layout flexible dan responsif untuk satu arah (baris atau kolom). Contohnya dapat digunakan untuk navbar, menu
+Grid adalah layour dua dimensi yang digunakan untuk membuat layout yang kompleks, seperti tata letak halaman utama, dashboard. Dengan grid memungkinkan pengaturan baris, kolom, dan jarak antar elemen secara detail 
 </details>

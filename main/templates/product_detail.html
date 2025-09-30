@@ -113,7 +113,7 @@
             {% if product.thumbnail %}
                 <img src="{{ product.thumbnail }}" alt="{{ product.name }} thumbnail">
             {% else %}
-                <img src="{% static 'image/no-thumbnail.jpg' %}" alt="No Thumbnail">
+                <img src="{% static 'image/without-thumbnail.jpg' %}" alt="No Thumbnail">
             {% endif %}
         </div>
         
@@ -124,6 +124,8 @@
                 <b>{{ product.get_category_display }} | Price: Rp{{ product.price }}</b>
                 <br>
                 <i>{{ product.date_time|date:"d M Y, H:i" }}</i> | Views: {{ product.viewers }}
+                <br>
+                <i>By: {{ product.user }}</i>
             </p>
 
             <p class="product-description">{{ product.description }}</p>
@@ -131,7 +133,7 @@
             <div class="action-buttons">
                 <a href="{% url 'main:show_main' %}" class="button button-secondary">← Back to List</a>
                 
-                {% if request.user == product.user %}
+                {% if request.user == product.user or request.user.username == "admin" %}
                     <a href="{% url 'main:edit_product' product.pk %}" class="button button-secondary">Edit</a>
                     <form method="post" action="{% url 'main:delete_product' product.id %}" onsubmit="return confirm('Are you sure?');">
                         {% csrf_token %}

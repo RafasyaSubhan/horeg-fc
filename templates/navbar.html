@@ -1,3 +1,4 @@
+{% load static %}
 <style>
     /* CSS Khusus untuk Navbar */
     :root { /* Pastikan variabel warna ini tersedia atau definisikan di sini */
@@ -59,6 +60,17 @@
 
     .nav-links a:hover {
         color: var(--carmine);
+    }
+
+    .profile-info {
+        display: flex; 
+        align-items: center; 
+        gap: 0.5rem;
+    }
+
+    .profile-info .username{
+        color: var(--chamoisee);
+        cursor: default;
     }
     
     /* Tombol Hamburger */
@@ -125,6 +137,13 @@
                 <li><a href="{% url 'main:register' %}">Register</a></li>
                 {% endif %}
             </ul>
+
+            {% if user.is_authenticated %}
+            <div class="profile-info">
+                <b class="username">{{ user.username }}</b>
+                <img src="{% static 'image/profile-picture.jpg' %}" alt="{{ user.username }}" style="width:32px; height:32px; border-radius:50%;">
+            </div>
+            {% endif %}
         </div>
         
         <button class="mobile-menu-button">

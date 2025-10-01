@@ -155,6 +155,15 @@
             flex-grow: 1; 
             margin-bottom: 1.5rem;
         }
+
+        .zero-product-image {
+            display: block;
+            margin: 3rem auto;
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            min-width: 100px;
+        }
         
         .footer-note {
             text-align: center;
@@ -179,7 +188,7 @@
         </header>
 
         {% if not products_list %}
-            <img src="{% static 'image/no-product.png' %}" alt="No Product to display" style="display: block; margin: auto;">
+            <img src="{% static 'image/zero-product.png' %}" alt="No Product to display" class="zero-product-image">
         {% else %}
             <div class="product-grid">
                 {% for product in products_list %}

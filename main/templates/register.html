@@ -23,7 +23,6 @@
             margin: 0;
         }
         
-        /* Kontainer utama untuk menengahkan form */
         .register-container {
             background-color: var(--sage);
             min-height: 100vh;
@@ -33,7 +32,6 @@
             padding: 1rem;
         }
         
-        /* Kotak form register */
         .register-box {
             background-color: var(--white);
             max-width: 450px;
@@ -58,7 +56,6 @@
             color: var(--chamoisee);
         }
         
-        /* Styling untuk form */
         .register-form .form-group {
             margin-bottom: 1.25rem;
         }
@@ -80,7 +77,6 @@
             box-sizing: border-box;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-
         .register-form input:focus {
             outline: none;
             border-color: var(--moss-green);
@@ -97,12 +93,16 @@
             font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, opacity 0.3s; 
             margin-top: 1rem;
         }
         
-        .register-form .button:hover {
+        .register-form .button:hover:not(:disabled) {
             background-color: #7a1a18;
+        }
+        .register-form .button:disabled { 
+            opacity: 0.6;
+            cursor: not-allowed;
         }
         
         .login-link {
@@ -120,27 +120,61 @@
             text-decoration: none;
         }
         
-        /* Styling untuk pesan error/sukses */
-        .form-errors, .messages {
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
+        .messages-container {
+            min-height: 25px; 
+            margin-bottom: 1rem;
         }
-        .error-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
         }
-        .error-list li {
-            background-color: #fff1f2;
-            border: 1px solid #ffb7b7;
-            color: #c42727;
-            padding: 0.8rem 1rem;
+        .toast {
+            background-color: var(--white);
+            color: #333;
+            padding: 15px 20px;
             border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+            transform: translateX(100%);
         }
-
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .toast-success {
+            border-left: 5px solid var(--moss-green);
+        }
+        .toast-error {
+            border-left: 5px solid var(--carmine);
+        }
+        .spinner {
+            display: none;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-left-color: var(--white);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .spinner.show {
+            display: inline-block;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    
+    <div id="toast-container"></div>
+    
     <div class="register-container">
         <div class="register-box">
             
@@ -148,41 +182,32 @@
                 <h1>Create Account</h1>
                 <p>Join Horeg FC today!</p>
             </div>
-
-            {% if form.errors %}
-            <div class="form-errors">
-                <ul class="error-list">
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <li>{{ field.label }}: {{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
+            
+            <div class="messages-container">
             </div>
-            {% endif %}
-
-            <form method="POST" action="" class="register-form">
+            
+            <form id="register-form" method="POST" action="{% url 'main:register_ajax' %}" class="register-form">
                 {% csrf_token %}
                 
                 <div class="form-group">
-                    <label for="{{ form.username.id_for_label }}">Username</label>
+                    <label for="id_username">Username</label>
                     {{ form.username }}
                 </div>
                 
                 <div class="form-group">
-                    <label for="{{ form.password.id_for_label }}">Password</label>
+                    <label for="id_password1">Password</label>
                     {{ form.password1 }}
                 </div>
                 
                 <div class="form-group">
-                    <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                    <label for="id_password2">Confirm Password</label>
                     {{ form.password2 }}
                 </div>
 
-                <button type="submit" class="button">Register</button>
+                <button type="submit" id="register-button" class="button">
+                    <span id="button-text">Register</span>
+                    <span id="button-spinner" class="spinner"></span>
+                </button>
             </form>
 
             <div class="login-link">
@@ -190,5 +215,77 @@
             </div>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <script>
+        function showToast(message, type = 'info') {
+            const container = $('#toast-container');
+            const toast = $('<div>').addClass('toast').addClass(`toast-${type}`).text(message);
+
+            container.append(toast);
+            
+            setTimeout(() => {
+                toast.addClass('show');
+            }, 10);
+
+            setTimeout(() => {
+                toast.removeClass('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 500); 
+            }, 3000);
+        }
+
+        $(document).ready(function() {
+            const form = $('#register-form');
+            const submitButton = $('#register-button');
+            const buttonText = $('#button-text');
+            const buttonSpinner = $('#button-spinner');
+
+            $('#id_username').attr('placeholder', 'Enter desired username');
+            $('#id_password1').attr('placeholder', 'Enter password');
+            $('#id_password2').attr('placeholder', 'Repeat password');
+
+
+            form.on('submit', function(e) {
+                e.preventDefault(); 
+
+                buttonText.text('Registering...');
+                buttonSpinner.addClass('show');
+                submitButton.prop('disabled', true);
+                
+                $.ajax({
+                    type: 'POST',
+                    url: form.attr('action'), 
+                    data: form.serialize(),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest' 
+                    },
+                    success: function(redirectUrl, textStatus, xhr) {
+                        showToast('Registrasi berhasil! Silakan login.', 'success');
+                        
+                        setTimeout(() => {
+                            window.location.href = redirectUrl; 
+                        }, 1000); 
+                    },
+                    error: function(xhr) {
+                        let message = "Gagal registrasi. Silakan periksa data Anda.";
+
+                        if (xhr.responseText) {
+                            message = xhr.responseText;
+                        }
+                        
+                        showToast(message, 'error');
+                    },
+                    complete: function() {
+                        buttonText.text('Register');
+                        buttonSpinner.removeClass('show');
+                        submitButton.prop('disabled', false);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

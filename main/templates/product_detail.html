@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     
     <style>
         :root {
@@ -18,6 +19,12 @@
             --sage: #B6C197;
             --beige: #D5DDBC;
             --white: #FFFFFF;
+            /* Tambahan untuk Modal */
+            --dark-text: #333333;
+            --light-text: #6b6b6b;
+            --border-color: #e0e0e0;
+            --save-color: var(--moss-green);
+            --save-hover: #7d8b5a;
         }
 
         body {
@@ -33,25 +40,22 @@
             padding: 0 1rem;
         }
         
-        /* Gambar dengan ratio 16:9 */
+        /* Gaya Produk */
         .product-image-container {
             width: 70%;
             margin: auto;
-            aspect-ratio: 16 / 9; /* Menjaga rasio 16:9 */
-            background-color: #e0e0e0; /* Warna fallback jika gambar tidak ada */
+            aspect-ratio: 16 / 9;
+            background-color: #e0e0e0;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
-
         .product-image-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
         }
-        
-        /* Deskripsi */
         .product-content-box {
             background-color: var(--white);
             border-radius: 12px;
@@ -59,14 +63,12 @@
             padding: 2.5rem;
             margin-top: 1rem;
         }
-        
         .product-content-box h1 {
             color: var(--moss-green);
             font-size: 2.5rem;
             margin: 0 0 0.5rem 0;
             line-height: 1.2;
         }
-
         .product-meta {
             font-size: 1rem;
             color: var(--chamoisee);
@@ -74,20 +76,23 @@
             border-bottom: 1px solid #eee;
             padding-bottom: 1.5rem;
         }
-
         .product-description {
             font-size: 1.1rem;
             line-height: 1.7;
             margin-bottom: 2rem;
             text-align: left;
+            /* Memastikan tidak ada float atau positioning yang mengganggu */
+            clear: both;
+            float: none;
+            position: static;
         }
         
+        /* Gaya Tombol Umum */
         .action-buttons {
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
         }
-        
         .button {
             display: inline-block;
             padding: 0.75rem 1.5rem;
@@ -98,17 +103,173 @@
             cursor: pointer;
             transition: transform 0.2s ease;
         }
-        .button:hover { transform: translateY(-2px); }
-        .button-primary { background-color: var(--carmine); color: var(--white); }
-        .button-secondary { background-color: var(--chamoisee); color: var(--white); }
+        .button:hover { 
+            transform: translateY(-2px);
+        }
+        .button-primary { 
+            background-color: var(--carmine);
+            color: var(--white);
+        }
+        .button-secondary { background-color: var(--chamoisee);
+            color: var(--white);
+        }
+        .close-button {
+            background-color: var(--beige);
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            color: var(--white);
+            cursor: pointer;
+        }
+        .close-button:hover{
+            background-color: var(--carmine);
+            color: var(--dark-text); 
+        }
+        
+        /* --- Modal CSS --- */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0; 
+            z-index: 50;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.5); 
+            opacity: 1;
+            transition: opacity 0.15s ease;
+            font-family: 'Poppins', sans-serif; 
+        }
+
+        .modal-backdrop.hidden {
+            display: none;
+            opacity: 0;
+        }
+
+        .modal-content-container {
+            background-color: var(--white);
+            border-radius: 12px; 
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05); 
+            width: 90%; 
+            max-width: 400px; 
+            max-height: 95vh; 
+            overflow-y: auto;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        
+        .opacity-0 { opacity: 0; }
+        .opacity-100 { opacity: 1; }
+        .scale-95 { transform: scale(0.95); }
+        .scale-100 { transform: scale(1); }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem; 
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-body {
+            padding: 1.5rem; 
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; 
+        }
+        
+        .modal-footer {
+            display: flex;
+            flex-direction: row; 
+            gap: 1rem; 
+            padding: 1.5rem; 
+            border-top: 1px solid var(--border-color); 
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .footer-button {
+            font-family: 'Poppins', sans-serif;
+            padding: 0.75rem 1.5rem; 
+            border-radius: 0.375rem; 
+            font-weight: 500; 
+            text-align: center;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            cursor: pointer;
+            flex-grow: 1; 
+        }
+        
+        .cancel-button {
+            border: 1px solid var(--border-color); 
+            color: var(--dark-text); 
+        }
+
+        .publish-button {
+            background-color: var(--carmine); 
+            color: var(--white); 
+            border: 1px solid var(--carmine);
+        }
+        
+        /* --- Toast Styling --- */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .toast {
+            background-color: var(--white);
+            color: var(--dark-text);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+            transform: translateX(100%);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .toast-success { border-left: 5px solid var(--moss-green); }
+        .toast-error { border-left: 5px solid var(--carmine); }
+        .toast-info { border-left: 5px solid var(--chamoisee); }
+
     </style>
 </head>
 <body>
-    
+    <div id="toast-container"></div>
     {% include 'navbar.html' %}
+    {% include 'modal_edit.html' %}
+    
+    <!-- Struktur Modal Delete -->
+    <div id="deleteModal" class="modal-backdrop hidden">
+        <div id="deleteModalContent" class="modal-content-container opacity-0 scale-95">
+            <div class="modal-header">
+                <h3 id="delete-modal-title">Konfirmasi Hapus Produk</h3>
+                <button type="button" class="close-button" onclick="hideDeleteConfirmationModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body" style="text-align: center;">
+                <p style="color: var(--carmine); font-weight: 600;">⚠️ PERINGATAN ⚠️</p>
+                <p>Anda yakin ingin menghapus produk:</p>
+                <p style="font-size: 1.1rem; color: var(--dark-text); font-style: italic;">
+                    "<b id="productNameToDelete"></b>"?
+                </p>
+                <p style="font-size: 0.9rem; color: var(--light-text);">Aksi ini tidak dapat dibatalkan.</p>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="footer-button cancel-button" onclick="hideDeleteConfirmationModal()">Batal</button>
+                <button type="button" id="confirmDeleteButton" class="footer-button publish-button" style="background-color: var(--carmine);" onclick="deleteProductAjax('{{ product.id }}')">
+                    Hapus Permanen
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Akhir Struktur Modal Delete -->
 
     <div class="container">
-        
         <div class="product-image-container">
             {% if product.thumbnail %}
                 <img src="{{ product.thumbnail }}" alt="{{ product.name }} thumbnail">
@@ -116,34 +277,170 @@
                 <img src="{% static 'image/without-thumbnail.jpg' %}" alt="No Thumbnail">
             {% endif %}
         </div>
-        
         <div class="product-content-box">
-            <h1>{{ product.name }}</h1>
-            
+            <h1 id="productNameDisplay">{{ product.name }}</h1>
             <p class="product-meta">
-                <b>{{ product.get_category_display }} | Price: Rp{{ product.price }}</b>
-                <br>
-                <i>{{ product.date_time|date:"d M Y, H:i" }}</i> | Views: {{ product.viewers }}
-                <br>
-                <i>By: {{ product.user }}</i>
+            <b><span id="productCategoryDisplay">{{ product.get_category_display }}</span> | Price: Rp<span id="productPriceDisplay">{{ product.price }}</span></b>
+            <br>
+            <i>{{ product.date_time|date:"d M Y, H:i" }}</i> | Views: {{ product.viewers }}
+            <br>
+            <i>By: {{ product.user }}</i>
             </p>
 
-            <p class="product-description">{{ product.description }}</p>
+            <p class="product-description" id="productDescriptionDisplay">{{ product.description }}</p>
 
             <div class="action-buttons">
                 <a href="{% url 'main:show_main' %}" class="button button-secondary">← Back to List</a>
-                
                 {% if request.user == product.user or request.user.username == "admin" %}
-                    <a href="{% url 'main:edit_product' product.pk %}" class="button button-secondary">Edit</a>
-                    <form method="post" action="{% url 'main:delete_product' product.id %}" onsubmit="return confirm('Are you sure?');">
-                        {% csrf_token %}
-                        <button type="submit" class="button button-primary">Delete</button>
-                    </form>
+                    <button type="button" class="button button-secondary" onclick="showEditModal()">
+                        Edit
+                    </button>
+                    <button type="button" class="button button-primary" onclick="showDeleteConfirmationModal()">
+                        Delete
+                    </button>
                 {% endif %}
             </div>
-        </div>
+    
+    <script>
+        // FUNGSI UTILITY (Toast dan CSRF) yang dibutuhkan oleh modal_delete.html
+        
+        function showToast(message, type = 'info') {
+            const container = $('#toast-container');
+            // Pastikan Anda memiliki CSS untuk .toast di sini atau file terpisah
+            const toast = $('<div>').addClass('toast').addClass(`toast-${type}`).text(message); 
 
-    </div>
+            container.append(toast);
+            
+            setTimeout(() => {
+                toast.addClass('show');
+            }, 10);
 
+            setTimeout(() => {
+                toast.removeClass('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 500); 
+            }, 3000);
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // FUNGSI PLACEHOLDER EDIT (Jika Anda memiliki modal_edit.html)
+        function showEditModal() {
+            // Placeholder: Logika untuk menampilkan modal edit
+            console.log("Edit Modal Triggered");
+        }
+        
+        // =========================================================================
+        // FUNGSI DELETE MODAL DAN AJAX (Dipindahkan dari modal_delete.html)
+        // =========================================================================
+        
+        const DELETE_ENDPOINT = "{% url 'main:delete_product_ajax' id=product.id %}";
+        const MAIN_URL = "{% url 'main:show_main' %}";
+
+        // Fungsi ini dipanggil dari tombol 'Delete' di product_detail.html
+        function showDeleteConfirmationModal() {
+            const productName = document.getElementById('productNameDisplay')?.innerText || 'Produk ini';
+            document.getElementById('productNameToDelete').innerText = productName;
+
+            const modal = document.getElementById('deleteModal');
+            const modalContent = document.getElementById('deleteModalContent');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('opacity-0', 'scale-95');
+                modalContent.classList.add('opacity-100', 'scale-100');
+            }, 50);
+        }
+
+        function hideDeleteConfirmationModal() {
+            const modal = document.getElementById('deleteModal');
+            const modalContent = document.getElementById('deleteModalContent');
+            
+            modalContent.classList.remove('opacity-100', 'scale-100');
+            modalContent.classList.add('opacity-0', 'scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 150);
+        }
+
+        // Fungsi bantu untuk mereset tombol dan modal jika ada error
+        function resetButton(button, originalText) {
+             button.disabled = false;
+             button.innerText = originalText;
+             hideDeleteConfirmationModal();
+        }
+
+        async function deleteProductAjax(productId) {
+            const button = document.getElementById('confirmDeleteButton');
+            const originalText = 'Hapus Permanen';
+            
+            // 1. Loading State
+            button.disabled = true;
+            button.innerText = 'Processing...';
+
+            try {
+                const response = await fetch(DELETE_ENDPOINT, {
+                    method: "POST",
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                });
+
+                if (response.status === 204 || response.ok) { // 204 No Content atau 200 OK
+                    // 2. Sukses: Tampilkan Toast lalu REDIRECT
+                    if (typeof showToast === 'function') {
+                        showToast('Produk berhasil dihapus!', 'success');
+                    }
+                    
+                    // ⭐ SOLUSI: REDIRECT SEGERA ⭐
+                    setTimeout(() => {
+                        window.location.href = MAIN_URL; 
+                    }, 100); 
+
+                } else {
+                     // 403 atau Error lainnya
+                     let message = 'Gagal menghapus produk karena masalah server.';
+
+                     if (response.status === 403) {
+                        message = 'Akses ditolak: Anda tidak memiliki izin untuk menghapus produk ini.';
+                     } else if (response.status === 404) {
+                        message = 'Produk tidak ditemukan.';
+                     }
+                     
+                     // Reset tombol dan tampilkan error
+                     resetButton(button, originalText); 
+                     if (typeof showToast === 'function') {
+                        showToast(message, 'error');
+                    }
+                }
+
+            } catch (error) {
+                console.error("AJAX Delete Error:", error);
+                
+                // Tangani error koneksi (Reset tombol)
+                resetButton(button, originalText);
+                
+                if (typeof showToast === 'function') {
+                    showToast('Gagal koneksi ke server.', 'error');
+                }
+            }
+        }
+    </script>
 </body>
 </html>

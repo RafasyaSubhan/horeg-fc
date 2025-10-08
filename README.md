@@ -280,3 +280,25 @@ padding-left: 10px;
 Flexbox adalah layout satu dimensi yang dapat membuat layout flexible dan responsif untuk satu arah (baris atau kolom). Contohnya dapat digunakan untuk navbar, menu
 Grid adalah layour dua dimensi yang digunakan untuk membuat layout yang kompleks, seperti tata letak halaman utama, dashboard. Dengan grid memungkinkan pengaturan baris, kolom, dan jarak antar elemen secara detail 
 </details>
+<details>
+<Summary><b>Tugas 6</b></Summary>
+
+## Apa perbedaan antara synchronous request dan asynchronous request?
+Synchronus request, ketika browser mengirim request, browser akan freeze dan tidak dapat menjalankan proses lain.
+Asynchrinus request, ketika browser mengirim request, browser tetap dapat berjalan dan pengguna tetap dapat berinteraksi dengan bagian lain dari halaman, request yang tadi berjalan di background
+
+## Bagaimana AJAX bekerja di Django (alur request–response)?
+Pengguna melakukan interaksi dengan frontend. Kemudian, javascript mengirimkan permintaan http ke server. Setelah itu javascript melampirkan token csrf dan header untuk menandai bahwa ini adalah request AJAX. Django mengarahkan request ke view yang sesuai. Lalu, view mengembalikan data status atau pesan dalam format JSON. Javascript menerima respons JSON dan menjalankan script callback untuk memperbarui elemen DOM.
+
+## Apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
+Keuntungannya ada pada UX dan efisiensi aplikasi. Aplikasi terasa lebih cepat dan responsif karena data yang dibutuhkan (format JSON) yang dikirim dari server, bukan seluruh HTML, CSS, dan assets lainnya. Oleh karena itu, browser dapat melakukan pembaruan tanpa memerlukan reload halaman penuh.
+
+## Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
+Cara utamanya dengan selalu mengirimkan data sensitif menggunakan metode POST dan memastikan bahwa setiap permintaan AJAX yang memodifikasi status sesi menyertakan token CSRF di header HTTP.
+
+## Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?
+1. AJAX menghilangkan kebutuhan akan full page reload setiap kali ada interaksi, sehingga membuat menjadi lancar dan cepat.
+2. Karena AJAX bersifat asynchronus, browser tidak akan freeze. Hal ini memungkinkan website menampilkan feedback seperti toast ada loading.
+3. Pengguna dapat terus berinteraksi dengan halaman yang tidak berubah, sementara data baru dimuat di background.
+
+</details>

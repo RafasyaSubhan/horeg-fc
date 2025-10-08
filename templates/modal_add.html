@@ -1,0 +1,316 @@
+<style>
+    :root {
+        --carmine: #931F1D;
+        --chamoisee: #937B63;
+        --moss-green: #8A9B68;
+        --sage: #B6C197;
+        --beige: #D5DDBC;
+        --white: #FFFFFF;
+        --dark-text: #333333; 
+        --light-text: #6b6b6b; 
+        --border-color: #e0e0e0; 
+        --submit-color: var(--moss-green); 
+        --submit-hover: #7d8b5a; 
+    }
+    
+    .modal-backdrop {
+        position: fixed;
+        inset: 0; 
+        z-index: 50;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.5); 
+        opacity: 1;
+        transition: opacity 0.15s ease;
+        font-family: 'Poppins', sans-serif; 
+    }
+
+    .modal-backdrop.hidden {
+        display: none;
+        opacity: 0;
+    }
+
+    .modal-content-container {
+        background-color: var(--white);
+        border-radius: 12px; 
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05); 
+        width: 90%; 
+        max-height: 95vh; 
+        overflow-y: auto;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    
+    @media (min-width: 640px) {
+        .modal-content-container {
+            width: 60%;
+        }
+    }
+    @media (min-width: 768px) {
+        .modal-content-container {
+            width: 50%;
+        }
+    }
+    @media (min-width: 1024px) {
+        .modal-content-container {
+            width: 40%;
+        }
+    }
+    @media (min-width: 1280px) {
+        .modal-content-container {
+            width: 33.333333%;
+        }
+    }
+
+    .opacity-0 { opacity: 0; }
+    .opacity-100 { opacity: 1; }
+    .scale-95 { transform: scale(0.95); }
+    .scale-100 { transform: scale(1); }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem; 
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-header h3 {
+        font-size: 1.25rem; 
+        font-weight: 600; 
+        color: var(--dark-text); 
+        margin: 0;
+    }
+
+    .modal-header p {
+        font-size: 0.875rem; 
+        color: var(--light-text); 
+        margin-top: 0.25rem; 
+    }
+
+    .close-button {
+        background-color: var(--beige);
+        border: none;
+        padding: 10px;
+        border-radius: 10px;
+        color: var(--white);
+    }
+
+    .close-button:hover {
+        cursor: pointer;
+        background-color: var(--carmine); 
+        color: var(--dark-text); 
+    }
+
+    .close-button svg {
+        width: 1.25rem; 
+        height: 1.25rem; 
+        fill: currentColor;
+    }
+    
+    .modal-body {
+        padding: 1.5rem; 
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem; 
+    }
+
+    .form-field {
+        margin-bottom: 1rem; 
+    }
+
+    .form-field label {
+        display: block;
+        font-size: 0.875rem; 
+        font-weight: 500; 
+        color: var(--dark-text); 
+        margin-bottom: 0.25rem;
+    }
+
+    .form-field input[type="text"],
+    .form-field input[type="number"],
+    .form-field input[type="url"],
+    .form-field textarea,
+    .form-field select {
+        font-family: 'Poppins', sans-serif;
+        
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem; 
+        border: 1px solid var(--border-color); 
+        border-radius: 0.375rem; 
+        padding: 0.5rem 0.75rem; 
+        box-sizing: border-box;
+        font-size: 1rem;
+        color: var(--dark-text);
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    
+    .form-field input:focus,
+    .form-field textarea:focus,
+    .form-field select:focus {
+        border-color: var(--moss-green); 
+        outline: none;
+        box-shadow: 0 0 0 1px var(--moss-green);
+    }
+
+    .form-field textarea {
+        resize: vertical;
+    }
+
+    .modal-footer {
+        display: flex;
+        flex-direction: column; 
+        gap: 1rem; 
+        padding: 1.5rem; 
+        border-top: 1px solid var(--border-color); 
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    @media (min-width: 640px) { 
+        .modal-footer {
+            flex-direction: row; 
+        }
+        .order-1-sm { order: 1; } 
+        .order-2-sm { order: 2; } 
+    }
+    
+    .modal-footer .cancel-button { order: 2; } 
+    .modal-footer .publish-button { order: 1; } 
+
+    .footer-button {
+        font-family: 'Poppins', sans-serif;
+
+        padding: 0.75rem 1.5rem; 
+        border-radius: 0.375rem; 
+        font-weight: 500; 
+        text-align: center;
+        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .cancel-button {
+        border: 1px solid var(--border-color); 
+        color: var(--dark-text); 
+        flex-grow: 0; 
+    }
+
+    .cancel-button:hover {
+        background-color: #f9fafb; 
+    }
+
+    .publish-button {
+        flex-grow: 1; 
+        background-color: var(--submit-color); 
+        color: var(--white); 
+        border: 1px solid var(--submit-color);
+    }
+
+    .publish-button:hover {
+        background-color: var(--submit-hover); 
+        border-color: var(--submit-hover);
+    }
+</style>
+
+<div id="crudModal" class="modal-backdrop hidden">
+    <div id="crudModalContent" class="modal-content-container opacity-0 scale-95">
+        <div class="modal-header">
+            <div>
+                <h3>
+                    Add New Product
+                </h3>
+                <p>List your official Horeg FC merchandise for sale.</p>
+            </div>
+            <button type="button" class="close-button" onclick="hideModal()">
+                <span class="sr-only">X</span>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <form id="newsForm"> 
+                <div class="form-field">
+                    <label for="name">Product Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter product name (e.g. Horeg FC Home Jersey 2024)" required>
+                </div>
+                
+                <div class="form-field">
+                    <label for="price">Price (in Rupiah)</label>
+                    <input type="number" id="price" name="price" placeholder="e.g. 150000" min="0" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="3" placeholder="Describe your product here" required></textarea>
+                </div>
+                
+                <div class="form-field">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Choose a category</option>
+                        <option value="jersey">Jersey</option>
+                        <option value="shoes">Football Shoes</option>
+                        <option value="ball">Ball</option>
+                        <option value="photocard">Photocard</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                </div>
+                
+                <div class="form-field">
+                    <label for="thumbnail">Thumbnail URL</label>
+                    <input type="url" id="thumbnail" name="thumbnail" placeholder="https://example.com/image.jpg">
+                </div>
+            </form>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" id="cancelButton" class="footer-button cancel-button order-2-sm" onclick="hideModal()">Cancel</button>
+            <button type="submit" id="submitNews" form="newsForm" class="footer-button publish-button order-1-sm">Add Product</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showModal() {
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        }, 50);
+    }
+
+    function hideModal() {
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+
+        modalContent.classList.remove('opacity-100', 'scale-100');
+        modalContent.classList.add('opacity-0', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 150);
+    }
+
+    async function addNewsEntry() {
+        await fetch("{% url 'main:add_product_ajax' %}", { 
+            method: "POST",
+            body: new FormData(document.querySelector('#newsForm')),
+        })
+        
+        document.getElementById("newsForm").reset();
+        hideModal();
+
+        document.dispatchEvent(new CustomEvent('productAdded')); 
+
+        return false;
+    }
+
+    document.getElementById("newsForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        addNewsEntry();
+    })
+</script>

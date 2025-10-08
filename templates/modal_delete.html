@@ -1,0 +1,114 @@
+{% load static %}
+
+<div id="deleteModal" class="modal-backdrop hidden">
+    <div id="deleteModalContent" class="modal-content-container opacity-0 scale-95" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3 id="delete-modal-title">Konfirmasi Hapus Produk</h3>
+            <button type="button" class="close-button" onclick="hideDeleteConfirmationModal()">&times;</button>
+        </div>
+        
+        <div class="modal-body" style="text-align: center;">
+            <p style="color: var(--carmine); font-weight: 600;">⚠️ PERINGATAN ⚠️</p>
+            <p>Anda yakin ingin menghapus produk:</p>
+            <p style="font-size: 1.1rem; color: var(--dark-text); font-style: italic;">
+                "<b id="productNameToDelete"></b>"?
+            </p>
+            <p style="font-size: 0.9rem; color: var(--light-text);">Aksi ini tidak dapat dibatalkan.</p>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="footer-button cancel-button" onclick="hideDeleteConfirmationModal()">Batal</button>
+            <button type="button" id="confirmDeleteButton" class="footer-button publish-button" style="background-color: var(--carmine);" onclick="deleteProductAjax('{{ product.id }}')">
+                Hapus Permanen
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const DELETE_ENDPOINT = "{% url 'main:delete_product_ajax' id=product.id %}";
+    const MAIN_URL = "{% url 'main:show_main' %}";
+
+    function showDeleteConfirmationModal() {
+        const productName = document.getElementById('productNameDisplay')?.innerText || 'Produk ini';
+        document.getElementById('productNameToDelete').innerText = productName;
+
+        document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    function hideDeleteConfirmationModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+
+    function resetButton(button, originalText) {
+        button.disabled = false;
+        button.innerText = originalText;
+        hideDeleteConfirmationModal();
+    }
+
+    async function deleteProductAjax(productId) {
+        const button = document.getElementById('confirmDeleteButton');
+        const originalText = 'Hapus Permanen';
+        
+        button.disabled = true;
+        button.innerText = 'Processing...';
+
+        try {
+            const response = await fetch(DELETE_ENDPOINT, {
+                method: "POST",
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+            });
+
+            if (response.status === 204 || response.ok) { 
+                if (typeof showToast === 'function') {
+                    showToast('Produk berhasil dihapus!', 'success');
+                }
+                
+                setTimeout(() => {
+                    window.location.href = MAIN_URL; 
+                }, 100); 
+
+            } else {
+                let message = 'Gagal menghapus produk karena masalah server.';
+
+                if (response.status === 403) {
+                    message = 'Akses ditolak: Anda tidak memiliki izin untuk menghapus produk ini.';
+                } else if (response.status === 404) {
+                    message = 'Produk tidak ditemukan.';
+                }
+                
+                resetButton(button, originalText); 
+                if (typeof showToast === 'function') {
+                    showToast(message, 'error');
+                }
+            }
+
+        } catch (error) {
+            console.error("AJAX Delete Error:", error);
+            
+            resetButton(button, originalText);
+            
+            if (typeof showToast === 'function') {
+                showToast('Gagal koneksi ke server.', 'error');
+            }
+        }
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>

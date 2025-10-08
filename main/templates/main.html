@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     
     <style>
         :root {
@@ -18,16 +19,11 @@
             --sage: #B6C197;
             --beige: #D5DDBC;
             --white: #FFFFFF;
+            --dark-text: #333333; 
         }
 
-        ::-webkit-scrollbar {
-            background-color: var(--white);
-        }
-        
-        ::-webkit-scrollbar-thumb{
-            background-color: var(--moss-green);
-            border-radius: 10px;
-        }
+        ::-webkit-scrollbar { background-color: var(--white); }
+        ::-webkit-scrollbar-thumb{ background-color: var(--moss-green); border-radius: 10px; }
 
         body {
             background-color: var(--sage);
@@ -64,14 +60,7 @@
             margin: 0 auto 1.5rem auto;
         }
 
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2.5rem;
-        }
-        
-        /* Buttons */
+        /* --- Buttons --- */
         .button {
             display: inline-block;
             padding: 0.75rem 1.5rem;
@@ -84,28 +73,112 @@
             cursor: pointer;
             transition: transform 0.2s ease, background-color 0.2s ease;
         }
-
         .button:hover {
             transform: translateY(-2px);
             background-color: #7d6851;
         }
-        
-        .button-primary {
-            background-color: var(--carmine);
+        .button-primary { background-color: var(--carmine); }
+        .button-primary:hover { background-color: #7a1a18; }
+        .button-ajax {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            margin-top: 1rem; 
+            background-color: var(--white);
+            color: var(--moss-green);
+            font-weight: 600;
+            border-radius: 8px; 
+            border: 2px solid var(--moss-green);
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+            text-decoration: none;
+        }
+        .button-ajax:hover {
+            background-color: var(--moss-green);
+            color: var(--white);
+            transform: translateY(-2px);
         }
 
-        .button-primary:hover {
-            background-color: #7a1a18;
+        /* --- CONTROLS and REFRESH --- */
+        #header-actions {
+            display: flex;
+            flex-direction: column; 
+            align-items: center;    
+            gap: 1rem;             
+            margin-top: 1rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center; 
+        }
+        
+        .action-buttons .button, .action-buttons .button-ajax {
+            margin-top: 0;
+        }
+        
+        .refresh-button {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem; 
+            border-radius: 8px;
+            border: 2px solid var(--moss-green); 
+            background-color: var(--moss-green); 
+            color: var(--white); 
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .refresh-button:hover:not(:disabled) {
+            background-color: #7d8b5a; 
+            transform: translateY(-2px);
+        }
+        .refresh-button svg {
+            margin-left: 0.5rem; 
+            width: 1.25rem;
+            height: 1.25rem;
+            transition: transform 0.5s;
+        }
+        .refresh-button svg.spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        
-        /* Products */
-        .product-grid {
+        /* --- Product Grid & State Management --- */
+        #product-list-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
+            margin-top: 2rem;
+            min-height: 300px; /* Menghindari layout shift saat loading */
+        }
+        
+        /* State Containers (Loading, Empty, Error) */
+        .state-message {
+            grid-column: 1 / -1; 
+            text-align: center;
+            padding: 3rem;
+            background-color: var(--white);
+            border-radius: 12px;
+            color: var(--carmine);
+            font-weight: 600;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+        .hidden {
+            display: none !important;
         }
 
+        /* Product Card Styling (untuk konten dinamis) */
         .product-card {
             background-color: var(--white);
             border-radius: 12px;
@@ -114,48 +187,43 @@
             display: flex;
             flex-direction: column;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: var(--chamoisee);
         }
-        
         .product-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.12);
         }
-
         .product-card img {
             width: 100%;
             height: 300px;
             object-fit: cover; 
         }
-
         .product-content {
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
         }
-
         .product-content h2 {
             margin: 0 0 0.5rem 0;
             font-size: 1.5rem;
         }
-
         .product-content h2 a {
             text-decoration: none;
             color: var(--moss-green);
         }
-
         .product-meta {
             font-size: 0.9rem;
             color: var(--chamoisee);
             margin-bottom: 1rem;
         }
-
         .product-description {
             color: #5c4d3e;
             flex-grow: 1; 
             margin-bottom: 1.5rem;
         }
-
+        
         .zero-product-image {
             display: block;
             margin: 3rem auto;
@@ -164,62 +232,296 @@
             height: auto;
             min-width: 100px;
         }
-        
-        .footer-note {
-            text-align: center;
-            margin-top: 3rem;
-            color: var(--chamoisee);
-            opacity: 0.7;
+
+        /* --- Toast Styling --- */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
         }
+        .toast {
+            background-color: var(--white);
+            color: var(--dark-text);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+            transform: translateX(100%);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .toast-success { border-left: 5px solid var(--moss-green); }
+        .toast-error { border-left: 5px solid var(--carmine); }
+        .toast-info { border-left: 5px solid var(--chamoisee); }
     </style>
 </head>
 <body>
     
     {% include 'navbar.html' %}
+    {% include 'modal_add.html' %} 
 
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+    
     <div class="container">
-        
         <header class="page-header">
             <h1>Our Collection</h1>
             <p class="shop-desc">
                 Discover the official products of Horeg FC, managed by {{ name }} ({{ npm }}), a proud student of {{ class }}.
             </p>
-            <a href="{% url 'main:add_product' %}" class="button button-primary">+ Add New Product</a>
+            
+            <div id="header-actions">
+                
+                <div class="action-buttons">
+                    <a href="{% url 'main:add_product' %}" class="button button-primary">+ Add New Product (Non-AJAX)</a>
+                    
+                    <button id="create-product-btn" onclick="showModal()" class="button-ajax">
+                        + Create Product by AJAX
+                    </button>
+                </div>
+                
+                <div class="refresh-control">
+                    <button id="refresh-products-btn" class="refresh-button">
+                        <span>Refresh List</span>
+                        <svg id="refresh-icon" class="refresh-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M21.5 8a10 10 0 0 0-18 0"/><path d="M2.5 16a10 10 0 0 0 18 0"/></svg>
+                    </button>
+                </div>
+            </div>
+            
         </header>
 
-        {% if not products_list %}
-            <img src="{% static 'image/zero-product.png' %}" alt="No Product to display" class="zero-product-image">
-        {% else %}
-            <div class="product-grid">
-                {% for product in products_list %}
-                <div class="product-card">
-                    {% if product.thumbnail %}
-                        <img src="{{ product.thumbnail }}" alt="{{ product.name }} thumbnail">
-                    {% else %}
-                        <img src="{% static 'image/without-thumbnail.jpg' %}" alt="No Thumbnail">
-                    {% endif %}
-                    
-                    <div class="product-content">
-                        <h2><a href="{% url 'main:show_product' product.id %}">{{ product.name }}</a></h2>
-                        
-                        <p class="product-meta">
-                            <b>{{ product.get_category_display }} | Price: Rp{{ product.price }}</b>
-                            {% if product.is_featured %} | <b>Featured</b>{% endif %}
-                            {% if product.is_viral %} | <b>Hot 🔥</b>{% endif %}
-                            <br>
-                            <i>{{ product.date_time|date:"d M Y H:i" }}</i> | Views: {{ product.viewers }}
-                        </p>
-
-                        <p class="product-description">{{ product.description|truncatewords:10 }}</p>
-                        
-                        <a href="{% url 'main:show_product' product.id %}" class="button">Read More</a>
-                    </div>
-                </div>
-                {% endfor %}
+        <!-- KONTEN PRODUK DINAMIS (DIISI OLEH JAVASCRIPT) -->
+        <div id="product-list-container">
+            
+            <!-- 1. Loading State -->
+            <div id="loading-state" class="state-message">
+                 Memuat data produk...
             </div>
-        {% endif %}
+            
+            <!-- 2. Empty State -->
+            <div id="empty-state" class="state-message hidden" style="background-color: var(--sage);">
+                <img src="{% static 'image/zero-product.png' %}" alt="No Product to display" class="zero-product-image" style="max-width: 200px;">
+            </div>
+            
+            <!-- 3. Error State -->
+            <div id="error-state" class="state-message hidden">
+                Terjadi kesalahan saat mengambil data. Coba Refresh.
+            </div>
+            
+            <!-- Card produk akan di-inject di sini -->
+        </div>
+
         
         <p class="footer-note">Last login session: {{ last_login }}</p>
     </div>
+    
+    <script>
+        // =========================================================================
+        // GLOBAL FUNCTIONS & STATE ELEMENTS
+        // =========================================================================
+        function showToast(message, type = 'info') {
+            const container = $('#toast-container');
+            const toast = $('<div>').addClass('toast').addClass(`toast-${type}`).text(message);
+
+            container.append(toast);
+            
+            setTimeout(() => {
+                toast.addClass('show');
+            }, 10);
+
+            setTimeout(() => {
+                toast.removeClass('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 500); 
+            }, 3000);
+        }
+        
+        // Modal Handlers (Akan dipanggil dari modal_add.html)
+        function showAddModal() {
+            const modal = document.getElementById('crudModal');
+            const modalContent = document.getElementById('crudModalContent');
+            
+            // Set modal ke mode 'Add New Product'
+            document.getElementById('modal-title').innerText = 'Add New Product';
+            document.getElementById('modal-subtitle').innerText = 'List your official Horeg FC merchandise for sale.';
+            document.getElementById('add-submit-button').innerText = 'Add Product';
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('opacity-0', 'scale-95');
+                modalContent.classList.add('opacity-100', 'scale-100');
+            }, 50);
+        }
+        
+        function hideAddModal() {
+            const modal = document.getElementById('crudModal');
+            const modalContent = document.getElementById('crudModalContent');
+
+            modalContent.classList.remove('opacity-100', 'scale-100');
+            modalContent.classList.add('opacity-0', 'scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('add-product-form')?.reset();
+            }, 150);
+        }
+
+        // =========================================================================
+        // REFRESH LIST PRODUCT & STATE MANAGEMENT
+        // =========================================================================
+        
+        const listContainer = $('#product-list-container');
+        const loadingState = $('#loading-state');
+        const emptyState = $('#empty-state');
+        const errorState = $('#error-state');
+        const refreshBtn = $('#refresh-products-btn');
+        const refreshIcon = $('#refresh-icon');
+        
+        // ⭐ Gunakan show_json sebagai LIST_ENDPOINT ⭐
+        const LIST_ENDPOINT = "{% url 'main:show_json' %}";
+
+        /**
+         * Mengubah tampilan kontainer list berdasarkan status.
+         */
+        function updateUIState(state) {
+            loadingState.addClass('hidden');
+            emptyState.addClass('hidden');
+            errorState.addClass('hidden');
+            // listContainer.empty(); // Hapus ini karena kita hanya ingin menghapus konten card, bukan state message
+
+            switch (state) {
+                case 'loading':
+                    // Bersihkan hanya konten produk yang lama, lalu tambahkan loading state
+                    listContainer.empty().append(loadingState.removeClass('hidden'));
+                    refreshBtn.prop('disabled', true);
+                    refreshIcon.addClass('spin');
+                    break;
+                case 'empty':
+                    listContainer.empty().append(emptyState.removeClass('hidden'));
+                    refreshBtn.prop('disabled', false);
+                    refreshIcon.removeClass('spin');
+                    break;
+                case 'error':
+                    listContainer.empty().append(errorState.removeClass('hidden'));
+                    refreshBtn.prop('disabled', false);
+                    refreshIcon.removeClass('spin');
+                    break;
+                case 'success':
+                    // Pada success, kita tidak perlu membersihkan atau menambahkan state message
+                    refreshBtn.prop('disabled', false);
+                    refreshIcon.removeClass('spin');
+                    break;
+            }
+        }
+        
+        /**
+         * Membuat kartu produk dari data JSON (format default dari Django serializers).
+         */
+        function createProductCard(productData) {
+            // Karena show_json mengembalikan data dari Django serializers: {pk, model, fields: {}}
+            const fields = productData.fields;
+            const pk = productData.pk;
+            
+            const thumbnail_url = fields.thumbnail || "{% static 'image/without-thumbnail.jpg' %}";
+            const detailUrl = `{% url 'main:show_product' id='PLACEHOLDER' %}`.replace('PLACEHOLDER', pk); 
+
+            // Menggunakan fungsi Number.prototype.toLocaleString() untuk format mata uang
+            const formattedPrice = Number(fields.price).toLocaleString('id-ID');
+            
+            // Format tanggal/waktu (asumsi fields.date_time ada di format ISO 8601)
+            const date = new Date(fields.date_time);
+            const displayDate = date.toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'});
+
+
+            return `
+                <a href="${detailUrl}" class="product-card">
+                    <img class="card-image" src="${thumbnail_url}" alt="${fields.name}" onerror="this.onerror=null;this.src='{% static 'image/without-thumbnail.jpg' %}'">
+                    <div class="product-content">
+                        <h2>${fields.name}</h2>
+                        
+                        <p class="product-meta">
+                            <b>${fields.category} | Price: Rp${formattedPrice}</b>
+                            ${fields.is_featured ? ' | <b>Featured</b>' : ''}
+                            ${fields.is_viral ? ' | <b>Hot 🔥</b>' : ''}
+                            <br>
+                            <i>${displayDate}</i> | Views: ${fields.viewers || 0}
+                        </p>
+
+                        <p class="product-description">${fields.description.substring(0, 50)}...</p>
+                        
+                        <span class="button">Read More</span>
+                    </div>
+                </a>
+            `;
+        }
+
+
+        /**
+         * Mengambil data produk terbaru dari server menggunakan AJAX.
+         */
+        async function fetchProducts(isManualRefresh = false) {
+            updateUIState('loading');
+            
+            try {
+                const response = await fetch(LIST_ENDPOINT);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // Response dari show_json mengembalikan JSON dari Django Serializer
+                const data = await response.json(); 
+                
+                // Bersihkan kontainer
+                listContainer.empty();
+                
+                // Pastikan data adalah array dan tidak kosong
+                if (!Array.isArray(data) || data.length === 0) {
+                    updateUIState('empty');
+                    // TIDAK ADA TOAST saat empty state, sesuai permintaan
+                    return;
+                }
+
+                // Render produk
+                let htmlContent = '';
+                data.forEach(product => {
+                    htmlContent += createProductCard(product);
+                });
+                
+                // Tambahkan semua card ke container
+                listContainer.append(htmlContent);
+                updateUIState('success');
+                
+                // TIDAK ADA TOAST saat refresh sukses, sesuai permintaan
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                updateUIState('error');
+                showToast('Gagal memuat produk. Koneksi atau server error.', 'error');
+            }
+        }
+
+        // Event listener untuk tombol Refresh
+        refreshBtn.on('click', () => fetchProducts(true));
+
+        // Panggil saat halaman dimuat pertama kali
+        $(document).ready(function() {
+            fetchProducts(false); // Panggil otomatis saat load
+        });
+        
+        // Global listener untuk form AJAX di modal_add.html
+        document.addEventListener('productAdded', function(e) {
+            // Setelah produk berhasil dibuat, refresh list secara otomatis
+            showToast(e.detail?.message || 'Product created successfully!', 'success');
+            fetchProducts(false); 
+        });
+
+    </script>
 </body>
 </html>

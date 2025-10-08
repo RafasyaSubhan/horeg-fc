@@ -1,0 +1,311 @@
+<style>
+    :root {
+        --carmine: #931F1D; 
+        --chamoisee: #937B63; 
+        --moss-green: #8A9B68; 
+        --sage: #B6C197; 
+        --beige: #D5DDBC; 
+        --white: #FFFFFF;
+        --dark-text: #333333; 
+        --light-text: #6b6b6b; 
+        --border-color: #e0e0e0; 
+        --save-color: var(--moss-green); 
+        --save-hover: #7d8b5a;
+    }
+    .modal-backdrop { 
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 1;
+        transition: opacity 0.15s ease;
+        font-family: 'Poppins', sans-serif;
+    }
+    .modal-backdrop.hidden { 
+        display: none;
+        opacity: 0;
+    }
+    .modal-content-container { 
+        z-index: 51;
+        position: relative;
+        background-color: var(--white);
+        border-radius: 12px;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        max-height: 95vh;
+        overflow-y: auto;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    @media (min-width: 768px) { 
+        .modal-content-container { 
+            width: 50%;
+        } 
+    }
+    .opacity-0 { 
+        opacity: 0;
+    } 
+    .opacity-100 { 
+        opacity: 1;
+    } 
+    .scale-95 { 
+        transform: scale(0.95);
+    } 
+    .scale-100 { 
+        transform: scale(1);
+    }
+    .modal-header { 
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .modal-header h3 { 
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--dark-text);
+        margin: 0;
+    }
+    .modal-body { 
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .form-field{
+        text-align: left;
+    }
+    .form-field label { 
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--dark-text);
+        margin-bottom: 0.25rem;
+    }
+    .form-field input, .form-field textarea, .form-field select { 
+        font-family: 'Poppins', sans-serif;
+        display: block;
+        width: 100%;
+        border: 1px solid var(--border-color);
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        box-sizing: border-box;
+        font-size: 1rem;
+        color: var(--dark-text);
+    }
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 1rem; 
+        height: 1rem; 
+        color: var(--moss-green); 
+        background-color: #f9fafb; 
+        border-color: var(--border-color); 
+        border-radius: 0.25rem; 
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        border: 1px solid var(--border-color);
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+        position: relative;
+    }
+
+    .checkbox-group input[type="checkbox"]:checked {
+        background-color: var(--moss-green);
+        border-color: var(--moss-green);
+    }
+
+    .checkbox-group input[type="checkbox"]:checked::before {
+        content: '✔';
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.7rem;
+        color: var(--white);
+    }
+
+    .checkbox-group label {
+        margin-left: 0.5rem; 
+        font-size: 0.875rem; 
+        font-weight: 500; 
+        color: var(--dark-text); 
+        cursor: pointer;
+    }
+    .modal-footer { 
+        display: flex;
+        gap: 1rem;
+        padding: 1.5rem;
+        border-top: 1px solid var(--border-color);
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+    .footer-button { 
+        font-family: 'Poppins', sans-serif;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        text-align: center;
+        transition: background-color 0.2s ease;
+        cursor: pointer;
+    }
+    .cancel-button { 
+        border: 1px solid var(--border-color);
+        color: var(--dark-text);
+        order: 1;
+        flex-grow: 1;
+    }
+    .save-button { 
+        background-color: var(--save-color);
+        color: var(--white);
+        border: 1px solid var(--save-color);
+        order: 2;
+        flex-grow: 1;
+    }
+</style>
+<div id="editModal" class="modal-backdrop hidden">
+    <div id="editModalContent" class="modal-content-container opacity-0 scale-95">
+        <div class="modal-header">
+            <div>
+                <h3 id="modalTitle">Edit Product</h3>
+                <p>Update details for <b>{{ product.name }}</b></p> 
+            </div>
+            <button type="button" class="close-button" onclick="hideEditModal()">
+                <span class="sr-only">X</span>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <form id="editProductForm"> 
+                {% csrf_token %}
+                <input type="hidden" id="edit_product_id" name="id" value="{{ product.pk }}"> 
+
+                <div class="form-field">
+                    <label for="edit_name">Product Name</label>
+                    <input type="text" id="edit_name" name="name" value="{{ product.name }}" required>
+                </div>
+                
+                <div class="form-field">
+                    <label for="edit_price">Price (in Rupiah)</label>
+                    <input type="number" id="edit_price" name="price" value="{{ product.price }}" min="0" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="edit_description">Description</label>
+                    <textarea id="edit_description" name="description" rows="3" required>{{ product.description }}</textarea>
+                </div>
+                
+                <div class="form-field">
+                    <label for="edit_category">Category</label>
+                    <select id="edit_category" name="category" required>
+                        <option value="jersey">Jersey</option>
+                        <option value="shoes">Football Shoes</option>
+                        <option value="ball">Ball</option>
+                        <option value="photocard">Photocard</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                </div>
+                
+                <div class="form-field">
+                    <label for="edit_thumbnail">Thumbnail URL</label>
+                    <input type="url" id="edit_thumbnail" name="thumbnail" value="{{ product.thumbnail|default_if_none:"" }}">
+                </div>
+                
+                <div class="form-field">
+                    <div class="checkbox-group">
+                        <input id="edit_is_featured" name="is_featured" type="checkbox" {% if product.is_featured %}checked{% endif %}>
+                        <label for="edit_is_featured">Featured Product</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" id="cancelButton" class="footer-button cancel-button" onclick="hideEditModal()">Cancel</button>
+            <button type="submit" id="saveChangesButton" form="editProductForm" class="footer-button save-button">Save Changes</button>
+        </div>
+    </div>
+</div>
+<script>
+    function showEditModal() {
+        const modal = document.getElementById('editModal'); 
+        const modalContent = document.getElementById('editModalContent');
+
+        const categorySelect = document.getElementById('edit_category');
+        categorySelect.value = "{{ product.category }}";
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        }, 50);
+    }
+
+    function hideEditModal() {
+        const modal = document.getElementById('editModal');
+        const modalContent = document.getElementById('editModalContent');
+
+        modalContent.classList.remove('opacity-100', 'scale-100');
+        modalContent.classList.add('opacity-0', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 150);
+    }
+
+    async function editProductEntry(e) {
+        e.preventDefault();
+        const form = document.getElementById('editProductForm');
+        const url = `{% url 'main:edit_product_ajax' id=product.pk %}`;
+
+        const response = await fetch(url, { 
+            method: "POST",
+            body: new FormData(form),
+        });
+
+        if (response.ok) { 
+            hideEditModal();
+            if (typeof showToast === 'function') {
+                showToast('Product updated successfully! Reloading...', '', 'success');
+            } else {
+                alert('Product updated successfully! Reloading page...');
+            }
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+            
+        } else if (response.status === 400) { 
+            const errorMessage = await response.text();
+            if (typeof showToast === 'function') {
+                showToast('Error: Invalid Data', errorMessage, 'error');
+            } else {
+                alert('Error updating product: ' + errorMessage);
+            }
+        } else { 
+            if (typeof showToast === 'function') {
+                showToast('Error', 'Failed to update product due to server issue or authorization.', 'error');
+            } else {
+                alert('Failed to update product. Please try again.');
+            }
+        }
+    }
+
+    document.getElementById("editProductForm").addEventListener("submit", editProductEntry);
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const categorySelect = document.getElementById('edit_category');
+        if (categorySelect) {
+            categorySelect.value = "{{ product.category }}";
+        }
+    });
+</script>

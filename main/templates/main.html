@@ -276,7 +276,6 @@
             </p>
             
             <div id="header-actions">
-                
                 <div class="action-buttons">
                     <a href="{% url 'main:add_product' %}" class="button button-primary">+ Add New Product (Non-AJAX)</a>
                     
@@ -289,6 +288,18 @@
                     <button id="refresh-products-btn" class="refresh-button">
                         <span>Refresh List</span>
                         <svg id="refresh-icon" class="refresh-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M21.5 8a10 10 0 0 0-18 0"/><path d="M2.5 16a10 10 0 0 0 18 0"/></svg>
+                    </button>
+                </div>
+
+                <div id="ascend">
+                    <button id="asc">
+                        <a href="{% url 'main:show_main' %}?sort=ascending">Ascending</a>
+                    </button>
+                </div>
+
+                <div id="descen">
+                    <button id="des">
+                        <a href="{% url 'main:show_main' %}?sort=descending">Descending</a>
                     </button>
                 </div>
             </div>
@@ -469,7 +480,18 @@
             updateUIState('loading');
             
             try {
-                const response = await fetch(LIST_ENDPOINT);
+                const query = window.location.search;
+                const urlParams = new URLSearchParams(query);
+                const sort = urlParams.get('sort');
+
+                let fetchUrl = LIST_ENDPOINT;
+                if(sort === "ascending"){
+                    fetchUrl += "?sort=ascending";
+                }
+                else if(sort === "descending"){
+                    fetchUrl += "?sort=descending";
+                }
+                const response = await fetch(fetchUrl);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -484,7 +506,6 @@
                 // Pastikan data adalah array dan tidak kosong
                 if (!Array.isArray(data) || data.length === 0) {
                     updateUIState('empty');
-                    // TIDAK ADA TOAST saat empty state, sesuai permintaan
                     return;
                 }
 
@@ -498,7 +519,6 @@
                 listContainer.append(htmlContent);
                 updateUIState('success');
                 
-                // TIDAK ADA TOAST saat refresh sukses, sesuai permintaan
 
             } catch (error) {
                 console.error("Fetch Error:", error);

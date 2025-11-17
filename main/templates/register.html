@@ -262,20 +262,26 @@
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest' 
                     },
-                    success: function(redirectUrl, textStatus, xhr) {
-                        showToast('Registrasi berhasil! Silakan login.', 'success');
+                    success: function(data, textStatus, xhr) {
+                        showToast(data.message, 'success');
                         
                         setTimeout(() => {
-                            window.location.href = redirectUrl; 
+                            window.location.href = data.redirect_url; 
                         }, 1000); 
                     },
                     error: function(xhr) {
-                        let message = "Gagal registrasi. Silakan periksa data Anda.";
-
-                        if (xhr.responseText) {
-                            message = xhr.responseText;
-                        }
+                        let message = "Gagal registrasi.";
                         
+                        try {
+                            // Ambil pesan error dari JSON yang dikirim server
+                            const errorData = JSON.parse(xhr.responseText);
+                            if (errorData && errorData.message) {
+                                message = errorData.message;
+                            }
+                        } 
+                        catch (e) {
+                                // Biarkan message default jika JSON parse gagal
+                        }
                         showToast(message, 'error');
                     },
                     complete: function() {

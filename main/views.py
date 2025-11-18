@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
 import requests
+import json
 
 # --- Fungsi Main (Renderer) ---
 @login_required(login_url='/login')
@@ -305,16 +306,18 @@ def proxy_image(request):
 def create_product_flutter(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        title = strip_tags(data.get("title", ""))  # Strip HTML tags
-        content = strip_tags(data.get("content", ""))  # Strip HTML tags
+        name = strip_tags(data.get("name", ""))  # Strip HTML tags
+        description = strip_tags(data.get("description", ""))  # Strip HTML tags
+        price=int(data["price"])
         category = data.get("category", "")
         thumbnail = data.get("thumbnail", "")
         is_featured = data.get("is_featured", False)
         user = request.user
         
         new_product = Product(
-            title=title, 
-            content=content,
+            name=name, 
+            description=description,
+            price=price,
             category=category,
             thumbnail=thumbnail,
             is_featured=is_featured,

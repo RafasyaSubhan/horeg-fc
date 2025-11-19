@@ -74,8 +74,7 @@ def add_product_ajax(request):
 @login_required(login_url='/login')
 def show_product(request,id):
     products = get_object_or_404(Product, pk=id)
-    # Asumsi fungsi add_visitor() ada di model Product
-    # products.add_visitor() 
+    products.add_visitor()
 
     context = {
         'product' : products
@@ -119,7 +118,7 @@ def show_json(request):
     elif filter_type =="descending":
         products_list = products_list.order_by('-price')
         
-    json_data = serializers.serialize("json", products_list)
+    json_data = serializers.serialize("json", products_list, use_natural_foreign_keys=True)
     return HttpResponse(json_data, content_type="application/json")
 
 # By id
@@ -134,7 +133,8 @@ def show_xml_by_id(request, product_id):
 def show_json_by_id(request, product_id):
     try:
         product_item = Product.objects.get(pk=product_id)
-        json_data = serializers.serialize("json", [product_item])
+        product_item.add_visitor()
+        json_data = serializers.serialize("json", [product_item], use_natural_foreign_keys=True)
         return HttpResponse(json_data, content_type="application/json")
     except Product.DoesNotExist:
         return HttpResponse(status=404)
@@ -328,3 +328,8 @@ def create_product_flutter(request):
         return JsonResponse({"status": "success"}, status=200)
     else:
         return JsonResponse({"status": "error"}, status=401)
+    
+@login_required
+def show_my_products_json(request):
+    data = Product.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize("json", data,use_natural_foreign_keys=True), content_type="application/json")

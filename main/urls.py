@@ -25,5 +25,6 @@ urlpatterns = [
     path('logout-ajax/', logout_ajax, name='logout_ajax'),
     path('proxy-image/', proxy_image, name='proxy_image'),
     path('create-flutter/', create_product_flutter, name='create_product_flutter'),
+    path('my-products-json/', show_my_products_json, name='show_my_products_json'),
 
 ]
